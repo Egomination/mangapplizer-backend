@@ -9,25 +9,34 @@ import (
 	"time"
 )
 
-const (
-	anilistURL = "https://graphql.anilist.co/"
-)
+// Query is the simplest query struct for passing url as a param instead of
+// having constant
+type Query struct {
+	URL string
+}
+
+// New query instance
+func New(url string) *Query {
+	return &Query{
+		URL: url,
+	}
+}
 
 // Marshal the query
-func prepeareRequestBody() ([]byte, error) {
+func prepeareRequestBody(query string) ([]byte, error) {
 	// Creating the request body.
 	return json.Marshal(map[string]string{
 		"query": query,
 	})
 }
 
-func prepeareRequest() (*http.Request, error) {
-	requestBody, err := prepeareRequestBody()
+func prepeareRequest(url string) (*http.Request, error) {
+	requestBody, err := prepeareRequestBody(query)
 	if err != nil {
 		log.Fatal(err)
 		panic(nil)
 	}
-	req, err := http.NewRequest("POST", anilistURL, bytes.NewBuffer(requestBody))
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(requestBody))
 	req.Header.Set("Content-Type", "application/json")
 
 	return req, err
@@ -45,8 +54,8 @@ func prepeareRequest() (*http.Request, error) {
 // fmt.Println(type)
 // `
 //
-func PostPayload() (*Anilist, error) {
-	req, err := prepeareRequest()
+func (q *Query) PostPayload() (*Anilist, error) {
+	req, err := prepeareRequest(q.URL)
 	if err != nil {
 		panic(err)
 	}
