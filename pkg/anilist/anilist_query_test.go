@@ -43,8 +43,8 @@ func TestPostPayload(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	expectedID := int64(3001)
-	if data.Data.Page.Media[0].ID == expectedID {
+	expectedID := int64(30001)
+	if data.Data.Page.Media[0].ID != expectedID {
 		t.Errorf("Resp is not what we want: got %v want %v",
 			data.Data.Page.Media[0].ID, expectedID)
 	}
