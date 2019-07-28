@@ -1,4 +1,3 @@
-github.com/Egomination/mangapplizer-backend v0.0.0-20190622135735-2702888ec340 h1:Zro28H8csJBQ7YI/yqMPwe1jUUP8rg10nBUV9uwSXY0=
 github.com/pkg/errors v0.8.1 h1:iURUrRGxPUNPdy5/HRSm+Yj6okJ6UtLINN0Q9M4+h3I=
 github.com/pkg/errors v0.8.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
 golang.org/x/image v0.0.0-20190703141733-d6a02ce849c9 h1:uc17S921SPw5F2gJo7slQ3aqvr2RwpL7eb3+DZncu3s=

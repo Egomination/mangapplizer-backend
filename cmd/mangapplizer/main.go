@@ -16,7 +16,7 @@ const (
 	anilistURL = "https://graphql.anilist.co/"
 )
 
-func mriTest() {
+func mriTest(mr *mangarock.Client) {
 	// m, e := mr.Manga("mrs-serie-100177863")
 	m, e := mr.Chapter("mrs-serie-100177863", "mrs-chapter-100177864")
 	if e != nil {
@@ -79,5 +79,6 @@ func main() {
 	options := make(map[string]string)
 	options["country"] = "United States"
 	mr := mangarock.New(mangarock.WithOptions(options))
+	mriTest(mr)
 
 }
