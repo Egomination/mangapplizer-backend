@@ -1,7 +1,6 @@
 package main
 
 import (
-	"log"
 	mangarock "mangapplizer-backend/pkg/parser/mangarock"
 )
 
@@ -34,7 +33,6 @@ func main() {
 		// Emulating user selected the 0th chapter which is the chapter 1
 		chapter := manga.Chapters[0]
 		pages, _ := mr.Chapter(manga.ID, chapter.ID)
-		log.Printf("%s", chapter)
 		path := "/tmp/" + mangarock.NormalizeOneDigitNumber(chapter.Order) + "-" +
 			chapter.ID + "/"
 
