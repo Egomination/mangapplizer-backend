@@ -1,7 +1,7 @@
 package main
 
 import (
-	mangarock "mangapplizer-backend/pkg/parser/mangarock"
+	mangarock "github.com/kondanta/mangarock-api"
 )
 
 const (
