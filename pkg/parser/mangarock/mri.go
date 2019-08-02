@@ -39,6 +39,8 @@ func DecodeRaw(r io.Reader) (io.Reader, int, error) {
 	pr, pw := io.Pipe()
 
 	// https://developers.google.com/speed/webp/docs/riff_container
+	// See drawWebpToCanvas function in the site's client.js file
+	// Extracted code: https://jsfiddle.net/6h2sLcs4/30/
 	go func() {
 		defer pw.Close()
 

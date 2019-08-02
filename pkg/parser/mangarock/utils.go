@@ -17,7 +17,6 @@ import (
 func SaveChapter(chapter *Chapter, path string) error {
 	// log.Printf("Ch name:%s, \n Ch id:%s , \n Ch order: %d , \n Pages: %v", m.Name, m.ID, m.Order, m.Pages)
 	path = path + "/"
-
 	for index, page := range chapter.Pages {
 		// log.Printf("%s", page)
 		e := saveMRI(index, page, path)
@@ -82,7 +81,8 @@ func saveMRI(index int, url string, path string) error {
 		log.Fatal(e)
 	}
 	defer response.Body.Close()
-	filename := strconv.Itoa(index) + "-" + lastString(strings.Split(url, "/"))
+	filename := NormalizeOneDigitNumber(index) + "-" +
+		lastString(strings.Split(url, "/"))
 
 	createMangaDir(path)
 	//open a file for writing
@@ -106,4 +106,12 @@ func saveMRI(index int, url string, path string) error {
 // lastString returns last element of the splitted strin
 func lastString(ss []string) string {
 	return ss[len(ss)-1]
+}
+
+// NormalizeOneDigitNumbers inserts '0' in front of one digit numbers [0-9].
+func NormalizeOneDigitNumber(order int) string {
+	if order < 10 {
+		return "0" + strconv.Itoa(order)
+	}
+	return strconv.Itoa(order)
 }

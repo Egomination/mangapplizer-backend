@@ -297,3 +297,19 @@ func (c *Client) Author(id string) (Author, []Manga, error) {
 	}
 	return authors[0], mangas, nil
 }
+
+// Search searches the given query
+func (c *Client) Search(query string) ([]string, error) {
+	// post request body
+	body := map[string]string{"type": "series", "keywords": query}
+	var ids []string
+	res, err := c.post(APIURL+"/mrs_search", body)
+	if err := json.Unmarshal(res, &ids); err != nil {
+		return nil, errors.Wrap(err, "Could not unmarshal searched mangas")
+	}
+
+	if err != nil {
+		errors.Wrap(err, "Error!")
+	}
+	return ids, nil
+}

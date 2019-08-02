@@ -3,7 +3,6 @@ package main
 import (
 	"log"
 	mangarock "mangapplizer-backend/pkg/parser/mangarock"
-	"strconv"
 )
 
 const (
@@ -19,25 +18,34 @@ func main() {
 	options := make(map[string]string)
 	options["country"] = "United States"
 	mr := mangarock.New(mangarock.WithOptions(options))
-	// TODO: fetch serie id and chapter id dynamically.
-	chapter, e := mr.Chapter("mrs-serie-243382", "mrs-chapter-200100701")
-	if e != nil {
-		log.Fatal(e)
-		return
-	}
 
-	// TODO: put decent structure for path
-	// basePath + mangaName + language(like en/jp) + chapterOrder/
-	path := "/tmp/" + strconv.Itoa(chapter.Order) + "/"
-
-	err := mangarock.SaveChapter(&chapter, path)
+	ids, err := mr.Search("bleach")
 	if err != nil {
 		panic(err)
 	}
 
-	err = mangarock.ConvertMRItoPNG(path)
+	series, err := mr.Mangas(ids)
 	if err != nil {
 		panic(err)
 	}
+	// s stands for the one series
+	for _, s := range series {
+		manga, _ := mr.Manga(s.ID)
+		// Emulating user selected the 0th chapter which is the chapter 1
+		chapter := manga.Chapters[0]
+		pages, _ := mr.Chapter(manga.ID, chapter.ID)
+		log.Printf("%s", chapter)
+		path := "/tmp/" + mangarock.NormalizeOneDigitNumber(chapter.Order) + "-" +
+			chapter.ID + "/"
 
+		err := mangarock.SaveChapter(&pages, path)
+		if err != nil {
+			panic(err)
+		}
+
+		err = mangarock.ConvertMRItoPNG(path)
+		if err != nil {
+			panic(err)
+		}
+	}
 }
