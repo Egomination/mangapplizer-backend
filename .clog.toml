@@ -1,0 +1,20 @@
+[clog]
+
+repository = "https://github.com/Egomination/mangapplizer-backend"
+
+changelog = "CHANGELOG.md"
+
+output-format = "markdown"
+
+from-latest-tag = true
+
+[sections]
+Refactor = ["refactor"]
+Ci = ["ci"]
+Performance = ["perf", "performance"]
+Feature = ["feat"]
+Documents = ["doc"]
+Chore = ["chore"]
+Fix = ["fix"]
+Test = ["test"]
+
