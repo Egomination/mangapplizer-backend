@@ -9,7 +9,7 @@ from-latest-tag = true
 # Changes that affect the build system or external dependencies (example scopes: go-mod)
 Build       = ["build"]
 # Changes to our CI configuration files and scripts (example scopes: Travis)
-Ci/Cd       = ["ci"]
+CICD        = ["ci"]
 # Documentation only changes (example scopes: Readme, Changelog, Template)
 Documents   = ["doc", "docs"]
 # A new feature
