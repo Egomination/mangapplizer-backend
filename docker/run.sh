@@ -2,6 +2,10 @@
 
 # TODO: Improve this script.
 
+export POSTGRES_PW=1
+export PGADMIN_EMAIL=t@d.com
+export PGADMIN_PASS=ehe
+
 if [ -z "$POSTGRES_PW" ]; then echo "EXPORT NECESSARY VARIABLES TO ENV"; exit 1; fi
 
 # Start postgresql
