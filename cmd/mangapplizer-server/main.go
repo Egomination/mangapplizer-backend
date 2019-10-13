@@ -10,6 +10,7 @@ import (
 	"mangapplizer-backend/restapi/operations"
 
 	// "mangapplizer-backend/restapi/operations/v1"
+	"mangapplizer-backend/pkg/database"
 
 	loads "github.com/go-openapi/loads"
 	flags "github.com/jessevdk/go-flags"
@@ -25,9 +26,12 @@ func main() {
 		log.Fatalln(err)
 	}
 
+	database.Initialize()
+	db := database.GetDB()
 	api := operations.NewMangapplizerAPI(swaggerSpec)
 	server := restapi.NewServer(api)
 	defer server.Shutdown()
+	defer db.Close()
 
 	parser := flags.NewParser(server, flags.Default)
 	parser.ShortDescription = "Mangapplizer Monolith API"
