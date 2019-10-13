@@ -12,6 +12,8 @@ require (
 	github.com/go-openapi/swag v0.19.5
 	github.com/go-openapi/validate v0.19.3
 	github.com/jessevdk/go-flags v1.4.0
+	github.com/jinzhu/gorm v1.9.11
+	github.com/joho/godotenv v1.3.0
 	github.com/mailru/easyjson v0.7.0 // indirect
 	golang.org/x/net v0.0.0-20190926025831-c00fd9afed17
 )
