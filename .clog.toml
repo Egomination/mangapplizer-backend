@@ -1,5 +1,4 @@
 [clog]
-
 repository      = "https://github.com/Egomination/mangapplizer-backend"
 changelog       = "CHANGELOG.md"
 output-format   = "markdown"
