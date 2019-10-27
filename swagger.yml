@@ -1,0 +1,190 @@
+---
+
+swagger: '2.0'
+
+host: 0.0.0.0:9092
+basePath: /api
+schemes:
+  - http
+  - https
+
+consumes:
+  - application/vnd.mangapplizer.api.v1+json
+produces:
+  - application/vnd.mangapplizer.api.v1+json
+securityDefinitions:
+  key:
+    type: apiKey
+    in: header
+    name: X-Token
+security:
+  - key: []
+
+info:
+  version: 0.1.0
+  title: Mangapplizer Monolith API
+  description: |
+    This application contains very limited amount of the API end points to improve our
+    development life cycle. This application' future is not bright yet.
+
+paths:
+  /v1:
+    get:
+      operationId: getRoot
+      tags: ["v1"]
+      summary: Get root of the API V1
+      description: |
+        "Just printing hello world message to the user"
+      responses:
+        200:
+          description: Successfull Response
+          schema:
+            title: Hello world
+            type: string
+        401:
+          description: Authentication Error
+          schema:
+            $ref: "#/definitions/AuthenticationError"
+
+  /v1/search/{manga}:
+    parameters:
+      - $ref: "#/parameters/mangaName"
+    get:
+      operationId: getManga
+      tags: ["v1", "search", "manga"]
+      summary: List of searched media
+      description: List of the searched manga
+      responses:
+        200:
+          description: Successfull response
+          schema:
+            title: MangaList
+            type: array
+            items:
+              $ref: "#/definitions/MangaList"
+        401:
+          description: Authentication Error
+          schema:
+            $ref: "#/definitions/AuthenticationError"
+
+parameters:
+  mangaName:
+    name: manga
+    description: Name of the searched manga
+    type: string
+    in: path #query
+    required: true
+    
+
+definitions:
+  Error:
+    title: Error structure
+    description: |
+      Contains all the properties any error response from the API will contain.
+      Some of the props are optional so might be empty.
+    type: object
+    required:
+      - code
+      - message
+    properties:
+      code:
+        description: The error code.
+        type: integer
+        format: int32
+      message:
+        description: Human readable error explanation
+        type: string
+      helpUrl:
+        description: Possible url for getting more help about the error
+        type: string
+        format: uri
+  AuthenticationError:
+    allOf:
+      - $ref: "#/definitions/Error"
+      - type: object
+        properties:
+          field:
+            description: an optimal field name to which this validation error applies
+            type: string
+  MangaList:
+    title: Represantation of the manga but little info
+    description: |
+      Minimalistic information regarding the media that we are going to call manga.
+      Useful for display in list views, like grid and such.
+
+    type: object
+    required:
+      - title
+      - status
+      - currentChapter
+      - finalChapter
+      - coverImage
+      - bannerImage
+      - lastUpdate
+    properties:
+      id:
+        title: The id of the manga
+        description: Unique identifier for the manga.
+        type: integer
+        format: int64
+        readOnly: true
+      title:
+        title: Title of the media
+        description: |
+          The title for the manga. Titles do not allow any formatting.
+        type: string
+        minLength: 1
+        maxLength: 200
+      description:
+        title: Description of the media
+        description : |
+          This is the part that we display manga's description. What is it about, what will it tell.
+        type: string
+      status:
+        title: Status of the media
+        description: |
+          On going? Finished? Status of the manga.
+        type: string
+      currentChapter:
+        title: current chapter no
+        description: |
+          Latest released chapter number of the manga known by the sources.
+        type: integer
+        format: int32
+      finalChapter:
+        title: Last chapter of the media
+        description: |
+          Final chapter of the manga we know. If manga is on-going, then it will probably be a question mark
+        type: string
+        minLength: 1
+        maxLength: 5
+      tags:
+        title: Known tags of the media
+        description: |
+          One of the main identifiers of the manga. This depicts the so called genres of the manga.
+        type: array
+        uniqueItems: true
+        items:
+          pattern: \w[\w- ]+
+          minLength: 2
+          type: string
+      coverImage:
+        title: Cover image of the media
+        description: The image that is going to presented as the manga
+        type: string
+        format: uri
+      bannerImage:
+        title: Banner image of the media
+        description: |
+          This is the big picture of the manga. It usally same as the cover but their resolution differs
+        type: string
+        format: uri
+      lastUpdate:
+        title: Last update of the media
+        description: |
+          This might be the trickiest thing on this list. It indicates the time latest update performed on this media.
+          The thing is, I am not sure what we should return from here. I mean, last edited time on the database or
+          last edited time on the source we are getting this manga before putting it in to the database.
+        type: string
+  principal:
+    type: string
