@@ -101,6 +101,19 @@ fn get_full_relation(
         .expect("Could not load tags")
 }
 
+pub fn test_get_data_from_db() {
+    use crate::schema::mangas::dsl::*;
+
+    let conn = establish_connection();
+
+    let r = mangas
+        .filter(title.like("ehe"))
+        .load::<manga::Manga>(&conn)
+        .expect("Error loading manga");
+
+    println!("{:#?}", r);
+}
+
 pub fn test_print_data() {
     let conn = establish_connection();
     let a = insert_test_data(&conn);
