@@ -1,4 +1,4 @@
-package main
+package database
 
 import (
 	"fmt"
@@ -151,6 +151,8 @@ func NewManga(db *gorm.DB, manga *Manga) (*Manga, error) {
 	return &Manga{Title: manga.Title}, nil
 }
 
+/*
+Test function
 func main() {
 	Initialize()
 	manga := Manga{
@@ -183,3 +185,4 @@ func main() {
 	}
 
 }
+*/
