@@ -5,9 +5,6 @@ extern crate dotenv;
 pub mod models;
 pub mod schema;
 
-// use schema::*;
-// use models::*;
-
 use diesel::pg::PgConnection;
 use diesel::prelude::*;
 use dotenv::dotenv;
@@ -16,35 +13,37 @@ use std::env;
 pub fn establish_connection() -> PgConnection {
     dotenv().ok();
 
-    let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set!");
-    PgConnection::establish(&database_url).expect(&format!("Error connection to {}", database_url))
+    let database_url =
+        env::var("DATABASE_URL").expect("DATABASE_URL must be set!");
+    PgConnection::establish(&database_url)
+        .expect(&format!("Error connection to {}", database_url))
 }
 
 fn insert_test_data(conn: &PgConnection) -> models::Manga {
     let manga = models::NewManga {
-        anilist_id: 1,
-        cover_image: "some bullshit".to_string(),
+        anilist_id:   1,
+        cover_image:  "some bullshit".to_string(),
         banner_image: "another_bullshit".to_string(),
-        start_date: "00.00.00".to_string(),
-        end_date: "11.11.11".to_string(),
-        status: "finished".to_string(),
-        title: "ehe".to_string(),
+        start_date:   "00.00.00".to_string(),
+        end_date:     "11.11.11".to_string(),
+        status:       "finished".to_string(),
+        title:        "ehe".to_string(),
     };
 
     let staff = models::NewStaff {
         anilist_id: 1,
-        image: "some-link.com".to_string(),
-        name: "Onez".to_string(),
-        role: "Author".to_string(),
+        image:      "some-link.com".to_string(),
+        name:       "Onez".to_string(),
+        role:       "Author".to_string(),
     };
 
     let relation = models::NewRelation {
-        media_type: "Anime".to_string(),
-        anilist_id: 111,
-        status: "On-going".to_string(),
-        title: "Ehe on roll".to_string(),
+        media_type:        "Anime".to_string(),
+        anilist_id:        111,
+        status:            "On-going".to_string(),
+        title:             "Ehe on roll".to_string(),
         relationship_type: "Adaptation".to_string(),
-        banner_image: "some-link-again.com".to_string(),
+        banner_image:      "some-link-again.com".to_string(),
     };
 
     let m: models::Manga = diesel::insert_into(schema::mangas::table)
@@ -65,7 +64,7 @@ fn insert_test_data(conn: &PgConnection) -> models::Manga {
     // Do the association !! This is the crucial part.
 
     let m_r = models::NewMedia {
-        manga_id: m.id,
+        manga_id:    m.id,
         relation_id: r.id,
     };
 
@@ -87,10 +86,14 @@ fn insert_test_data(conn: &PgConnection) -> models::Manga {
     m
 }
 
-fn get_full_relation(manga: &models::Manga, conn: &PgConnection) -> std::vec::Vec<models::Staff> {
+fn get_full_relation(
+    manga: &models::Manga,
+    conn: &PgConnection,
+) -> std::vec::Vec<models::Staff> {
     use diesel::pg::expression::dsl::any;
 
-    let manga_staff = models::Series::belonging_to(manga).select(schema::series::staff_id);
+    let manga_staff =
+        models::Series::belonging_to(manga).select(schema::series::staff_id);
     schema::staffs::table
         .filter(schema::staffs::id.eq(any(manga_staff)))
         .load::<models::Staff>(conn)
