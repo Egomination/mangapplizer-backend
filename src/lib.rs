@@ -101,7 +101,7 @@ fn get_full_relation(
         .expect("Could not load tags")
 }
 
-pub fn test_get_data_from_db() {
+pub fn test_get_data_from_db(uuid: uuid::Uuid) {
     use crate::schema::mangas::dsl::*;
 
     let conn = establish_connection();
@@ -112,6 +112,23 @@ pub fn test_get_data_from_db() {
         .expect("Error loading manga");
 
     println!("{:#?}", r);
+
+    let _m = get_manga_by_id(uuid, &conn);
+}
+
+pub fn get_manga_by_id(
+    manga_id: uuid::Uuid,
+    conn: &PgConnection,
+) -> std::vec::Vec<models::manga::Manga> {
+    use crate::schema::mangas::dsl::*;
+
+    let response = mangas
+        .filter(id.eq(manga_id))
+        .load::<manga::Manga>(conn)
+        .expect("error searching manga");
+
+    println!("{:#?}", response);
+    response
 }
 
 pub fn test_print_data() {
