@@ -37,7 +37,7 @@ pub struct MangaList(pub Vec<Manga>);
 impl MangaList {
     pub fn list(connection: &PgConnection) -> Self {
         use crate::schema::mangas::dsl::*;
-        use diesel::QueryDsl;
+        // use diesel::QueryDsl;
         use diesel::RunQueryDsl;
 
         let result = mangas
