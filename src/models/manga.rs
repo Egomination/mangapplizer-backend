@@ -3,32 +3,48 @@ use diesel::PgConnection;
 
 // Return type from the db
 #[derive(
-    Queryable, Identifiable, Associations, Debug, Serialize, Deserialize,
+    Queryable,
+    Identifiable,
+    Associations,
+    Debug,
+    Serialize,
+    Deserialize,
+    AsChangeset,
 )]
 pub struct Manga {
-    pub id:           uuid::Uuid,
-    pub created_at:   Option<std::time::SystemTime>,
-    pub updated_at:   Option<std::time::SystemTime>,
-    pub deleted_at:   Option<std::time::SystemTime>,
-    pub anilist_id:   i64,
-    pub cover_image:  String,
-    pub banner_image: String,
-    pub start_date:   String,
-    pub end_date:     String,
-    pub status:       String,
-    pub title:        String,
+    pub id:             uuid::Uuid,
+    pub created_at:     Option<std::time::SystemTime>,
+    pub updated_at:     Option<std::time::SystemTime>,
+    pub deleted_at:     Option<std::time::SystemTime>,
+    pub anilist_id:     i64,
+    pub cover_image:    String,
+    pub banner_image:   String,
+    pub start_date:     String,
+    pub end_date:       String,
+    pub status:         String,
+    pub title:          String,
+    pub description:    String,
+    pub total_chapters: Option<String>,
+    pub volumes:        Option<String>,
+    pub genres:         Vec<String>,
+    pub popularity:     i64,
 }
 // Used when new manga is going to be inserted into the database
-#[derive(Insertable, Debug, Deserialize)]
+#[derive(Insertable, Debug, Deserialize, AsChangeset)]
 #[table_name = "mangas"]
 pub struct NewManga {
-    pub anilist_id:   i64,
-    pub cover_image:  String,
-    pub banner_image: String,
-    pub start_date:   String,
-    pub end_date:     String,
-    pub status:       String,
-    pub title:        String,
+    pub anilist_id:     i64,
+    pub cover_image:    String,
+    pub banner_image:   String,
+    pub start_date:     String,
+    pub end_date:       String,
+    pub status:         String,
+    pub title:          String,
+    pub description:    String,
+    pub total_chapters: Option<String>,
+    pub volumes:        Option<String>,
+    pub genres:         Vec<String>,
+    pub popularity:     i64,
 }
 
 #[derive(Serialize, Deserialize)]
