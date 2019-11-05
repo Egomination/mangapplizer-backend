@@ -34,12 +34,13 @@ pub fn create(
     pool: web::Data<PgPool>,
 ) -> Result<HttpResponse, HttpResponse> {
     let pg_pool = pg_pool_handler(pool)?;
+
     let m = manga::NewManga {
         anilist_id:     new_manga.anilist_id,
         cover_image:    new_manga.cover_image.large.to_owned(),
         banner_image:   new_manga.banner_image.to_owned(),
-        start_date:     new_manga.start_date.to_string().to_owned(),
-        end_date:       new_manga.end_date.to_string().to_owned(),
+        start_date:     new_manga.start_date.to_owned().to_string(),
+        end_date:       new_manga.end_date.to_owned().to_string(),
         status:         new_manga.status.to_owned(),
         title:          new_manga.manga_name.native.to_owned(),
         description:    new_manga.description.to_owned(),

@@ -97,6 +97,12 @@ impl std::fmt::Display for Date {
         &self,
         f: &mut std::fmt::Formatter,
     ) -> std::fmt::Result {
-        write!(f, "{:?}/{:?}/{:?}", self.year, self.month, self.day)
+        write!(
+            f,
+            "{:?}/{:?}/{:?}",
+            self.year.unwrap_or_else(|| -1),
+            self.month.unwrap_or_else(|| -1),
+            self.day.unwrap_or_else(|| -1)
+        )
     }
 }
