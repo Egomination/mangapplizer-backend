@@ -25,3 +25,16 @@ pub struct NewRelation {
     pub title:             String,
     pub banner_image:      String,
 }
+
+impl NewRelation {
+    pub fn create(
+        &self,
+        connection: &PgConnection,
+    ) -> Result<Relation, diesel::result::Error> {
+        use diesel::RunQueryDsl;
+
+        diesel::insert_into(relations::table)
+            .values(self)
+            .get_result(connection)
+    }
+}
