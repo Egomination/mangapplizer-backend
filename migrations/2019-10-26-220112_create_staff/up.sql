@@ -5,8 +5,9 @@ CREATE TABLE staffs(
        updated_at timestamp DEFAULT NOW(),
        deleted_at timestamp DEFAULT NULL,
        anilist_id BIGSERIAL NOT NULL,
-       role text NOT NULL,
-       name text NOT NULL UNIQUE,
+       staff_role text NOT NULL,
+       staff_name text NOT NULL UNIQUE,
        image text NOT NULL,
+       description text NOT NULL,
        CONSTRAINT staffs_pkey PRIMARY KEY(id)
 )

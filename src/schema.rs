@@ -57,9 +57,10 @@ table! {
         updated_at -> Nullable<Timestamp>,
         deleted_at -> Nullable<Timestamp>,
         anilist_id -> Int8,
-        role -> Text,
-        name -> Text,
+        staff_role -> Text,
+        staff_name -> Text,
         image -> Text,
+        description -> Text,
     }
 }
 
@@ -68,4 +69,10 @@ joinable!(media -> relations (relation_id));
 joinable!(series -> mangas (manga_id));
 joinable!(series -> staffs (staff_id));
 
-allow_tables_to_appear_in_same_query!(mangas, media, relations, series, staffs,);
+allow_tables_to_appear_in_same_query!(
+    mangas,
+    media,
+    relations,
+    series,
+    staffs,
+);
