@@ -1,4 +1,5 @@
 use crate::schema::staffs;
+use diesel::PgConnection;
 
 #[derive(Queryable, Identifiable, Associations, Debug)]
 pub struct Staff {
@@ -19,4 +20,17 @@ pub struct NewStaff {
     pub role:       String,
     pub name:       String,
     pub image:      String,
+}
+
+impl NewStaff {
+    pub fn create(
+        &self,
+        connection: &PgConnection,
+    ) -> Result<Staff, diesel::result::Error> {
+        use diesel::RunQueryDsl;
+
+        diesel::insert_into(staffs::table)
+            .values(self)
+            .get_result(connection)
+    }
 }

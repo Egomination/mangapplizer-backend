@@ -10,7 +10,10 @@ use crate::db_connection::{
     PgPool,
     PgPooledConnection,
 };
-use crate::models::manga;
+use crate::models::{
+    manga,
+    staff,
+};
 
 fn pg_pool_handler(
     pool: web::Data<PgPool>
@@ -34,6 +37,7 @@ pub fn create(
     pool: web::Data<PgPool>,
 ) -> Result<HttpResponse, HttpResponse> {
     let pg_pool = pg_pool_handler(pool)?;
+    let mut staff_ids = vec![];
 
     let m = manga::NewManga {
         anilist_id:     new_manga.anilist_id,
@@ -49,6 +53,20 @@ pub fn create(
         genres:         new_manga.genres.to_owned(),
         popularity:     new_manga.popularity,
     };
+
+    for staff in new_manga.staff.to_owned().into_iter() {
+        let s = staff::NewStaff {
+            anilist_id: staff.anilist_id,
+            role:       staff.position,
+            name:       staff.name,
+            image:      staff.picture.large,
+        };
+        let resp: staff::Staff = s.create(&pg_pool).unwrap();
+        staff_ids.push(resp.id)
+    }
+
+    println!("{:#?}", staff_ids);
+
     m.create(&pg_pool)
         .map(|manga| HttpResponse::Ok().json(manga))
         .map_err(|e| HttpResponse::InternalServerError().json(e.to_string()))
