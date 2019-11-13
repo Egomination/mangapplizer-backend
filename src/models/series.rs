@@ -3,6 +3,7 @@ use crate::models::{
     staff,
 };
 use crate::schema::series;
+use diesel::PgConnection;
 
 #[derive(Queryable, Identifiable, Associations, Debug)]
 #[belongs_to(manga::Manga)]
@@ -19,4 +20,17 @@ pub struct Series {
 pub struct NewSeries {
     pub manga_id: uuid::Uuid,
     pub staff_id: uuid::Uuid,
+}
+
+impl NewSeries {
+    pub fn create(
+        &self,
+        connection: &PgConnection,
+    ) -> Result<Series, diesel::result::Error> {
+        use diesel::RunQueryDsl;
+
+        diesel::insert_into(series::table)
+            .values(self)
+            .get_result(connection)
+    }
 }
