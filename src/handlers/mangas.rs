@@ -56,12 +56,30 @@ fn handle_bridge_tables(
     Ok(*manga_id)
 }
 
+fn create_staff(
+    staff: &Vec<json_manga::Staff>,
+    pg_pool: &PgConnection,
+) -> Vec<uuid::Uuid> {
+    let mut staff_ids = vec![];
+
+    for staff in staff.to_owned() {
+        let s = staff::NewStaff {
+            anilist_id: staff.anilist_id,
+            role:       staff.position,
+            name:       staff.name,
+            image:      staff.picture.large,
+        };
+        let resp: staff::Staff = s.create(&pg_pool).unwrap();
+        staff_ids.push(resp.id)
+    }
+    staff_ids
+}
+
 pub fn create(
     new_manga: web::Json<json_manga::Manga>,
     pool: web::Data<PgPool>,
 ) -> Result<HttpResponse, HttpResponse> {
     let pg_pool = pg_pool_handler(pool)?;
-    let mut staff_ids = vec![];
 
     let m = manga::NewManga {
         anilist_id:     new_manga.anilist_id,
@@ -78,19 +96,8 @@ pub fn create(
         popularity:     new_manga.popularity,
     };
 
-    for staff in new_manga.staff.to_owned().into_iter() {
-        let s = staff::NewStaff {
-            anilist_id: staff.anilist_id,
-            role:       staff.position,
-            name:       staff.name,
-            image:      staff.picture.large,
-        };
-        let resp: staff::Staff = s.create(&pg_pool).unwrap();
-        staff_ids.push(resp.id)
-    }
-
     let manga_response: manga::Manga = m.create(&pg_pool).unwrap();
-
+    let staff_ids = create_staff(&new_manga.staff, &pg_pool);
     println!("{:#?}", staff_ids);
     handle_bridge_tables(&manga_response.id, &staff_ids, &pg_pool)
         .map(|id| HttpResponse::Ok().json(id))
