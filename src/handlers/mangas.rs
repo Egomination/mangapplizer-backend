@@ -10,8 +10,12 @@ use crate::db_connection::{
     PgPool,
     PgPooledConnection,
 };
+
+use diesel::PgConnection;
+
 use crate::models::{
     manga,
+    series,
     staff,
 };
 
@@ -30,6 +34,26 @@ pub fn index(
 ) -> Result<HttpResponse, HttpResponse> {
     let pg_pool = pg_pool_handler(pool)?;
     Ok(HttpResponse::Ok().json(manga::MangaList::list(&pg_pool)))
+}
+
+fn handle_bridge_tables(
+    manga_id: &uuid::Uuid,
+    staff_ids: &Vec<uuid::Uuid>,
+    pg_pool: &PgConnection,
+) -> Result<uuid::Uuid, diesel::result::Error> {
+    for staff_id in staff_ids.to_owned().into_iter() {
+        let series = series::NewSeries {
+            manga_id: *manga_id,
+            staff_id: staff_id,
+        };
+        let response = series.create(&pg_pool);
+        match response {
+            Err(e) => return Err(e),
+            Ok(_response) => (),
+        }
+    }
+
+    Ok(*manga_id)
 }
 
 pub fn create(
@@ -65,9 +89,14 @@ pub fn create(
         staff_ids.push(resp.id)
     }
 
-    println!("{:#?}", staff_ids);
+    let manga_response: manga::Manga = m.create(&pg_pool).unwrap();
 
-    m.create(&pg_pool)
-        .map(|manga| HttpResponse::Ok().json(manga))
+    println!("{:#?}", staff_ids);
+    handle_bridge_tables(&manga_response.id, &staff_ids, &pg_pool)
+        .map(|id| HttpResponse::Ok().json(id))
         .map_err(|e| HttpResponse::InternalServerError().json(e.to_string()))
+
+    // m.create(&pg_pool)
+    //     .map(|manga| HttpResponse::Ok().json(manga))
+    //     .map_err(|e| HttpResponse::InternalServerError().json(e.to_string()))
 }
