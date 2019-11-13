@@ -1,4 +1,5 @@
 use crate::schema::relations;
+use diesel::PgConnection;
 
 #[derive(Queryable, Identifiable, Associations, Debug)]
 #[table_name = "relations"]

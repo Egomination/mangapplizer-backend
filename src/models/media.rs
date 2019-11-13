@@ -3,6 +3,7 @@ use crate::models::{
     relation,
 };
 use crate::schema::media;
+use diesel::PgConnection;
 
 #[derive(Queryable, Identifiable, Associations, Debug)]
 #[belongs_to(manga::Manga)]
@@ -19,4 +20,17 @@ pub struct Media {
 pub struct NewMedia {
     pub manga_id:    uuid::Uuid,
     pub relation_id: uuid::Uuid,
+}
+
+impl NewMedia {
+    pub fn create(
+        &self,
+        connection: &PgConnection,
+    ) -> Result<Media, diesel::result::Error> {
+        use diesel::RunQueryDsl;
+
+        diesel::insert_into(media::table)
+            .values(self)
+            .get_result(connection)
+    }
 }
