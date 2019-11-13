@@ -15,6 +15,8 @@ use diesel::PgConnection;
 
 use crate::models::{
     manga,
+    media,
+    relation,
     series,
     staff,
 };
@@ -36,43 +38,78 @@ pub fn index(
     Ok(HttpResponse::Ok().json(manga::MangaList::list(&pg_pool)))
 }
 
-fn handle_bridge_tables(
+// TODO: Check https://doc.rust-lang.org/rust-by-example/error/iter_result.html
+// for more idiomatic implementation for belove function
+fn create_staffs(
     manga_id: &uuid::Uuid,
-    staff_ids: &Vec<uuid::Uuid>,
+    staffs: &Vec<json_manga::Staff>,
     pg_pool: &PgConnection,
 ) -> Result<uuid::Uuid, diesel::result::Error> {
-    for staff_id in staff_ids.to_owned().into_iter() {
-        let series = series::NewSeries {
-            manga_id: *manga_id,
-            staff_id: staff_id,
+    for staff in staffs.to_owned() {
+        let s = staff::NewStaff {
+            anilist_id:  staff.anilist_id,
+            staff_role:  staff.position,
+            staff_name:  staff.name,
+            image:       staff.picture.large,
+            description: staff.description,
         };
-        let response = series.create(&pg_pool);
-        match response {
+        let resp = s.create(&pg_pool);
+        match resp {
             Err(e) => return Err(e),
-            Ok(_response) => (),
+            Ok(response) => {
+                ({
+                    let series = series::NewSeries {
+                        manga_id: *manga_id,
+                        staff_id: response.id,
+                    };
+                    let resp: Result<series::Series, diesel::result::Error> =
+                        series.create(&pg_pool);
+                    match resp {
+                        Err(e) => return Err(e),
+                        Ok(_response) => (),
+                    }
+                })
+            }
         }
     }
 
     Ok(*manga_id)
 }
 
-fn create_staff(
-    staff: &Vec<json_manga::Staff>,
+fn create_relations(
+    manga_id: &uuid::Uuid,
+    relations: &Vec<json_manga::Relation>,
     pg_pool: &PgConnection,
-) -> Vec<uuid::Uuid> {
-    let mut staff_ids = vec![];
-
-    for staff in staff.to_owned() {
-        let s = staff::NewStaff {
-            anilist_id: staff.anilist_id,
-            role:       staff.position,
-            name:       staff.name,
-            image:      staff.picture.large,
+) -> Result<uuid::Uuid, diesel::result::Error> {
+    for relation in relations.to_owned() {
+        let r = relation::NewRelation {
+            anilist_id:        relation.anilist_id,
+            relationship_type: relation.relation_type,
+            media_type:        relation.media_type,
+            status:            relation.status,
+            title:             relation.name,
+            banner_image:      relation.image,
         };
-        let resp: staff::Staff = s.create(&pg_pool).unwrap();
-        staff_ids.push(resp.id)
+        let resp = r.create(&pg_pool);
+        match resp {
+            Err(e) => return Err(e),
+            Ok(response) => {
+                ({
+                    let m = media::NewMedia {
+                        manga_id:    *manga_id,
+                        relation_id: response.id,
+                    };
+                    let response: Result<media::Media, diesel::result::Error> =
+                        m.create(&pg_pool);
+                    match response {
+                        Err(e) => return Err(e),
+                        Ok(_response) => (),
+                    }
+                })
+            }
+        }
     }
-    staff_ids
+    Ok(*manga_id)
 }
 
 pub fn create(
@@ -96,10 +133,9 @@ pub fn create(
         popularity:     new_manga.popularity,
     };
 
-    let manga_response: manga::Manga = m.create(&pg_pool).unwrap();
-    let staff_ids = create_staff(&new_manga.staff, &pg_pool);
-    println!("{:#?}", staff_ids);
-    handle_bridge_tables(&manga_response.id, &staff_ids, &pg_pool)
+    let response: manga::Manga = m.create(&pg_pool).unwrap();
+    create_staffs(&response.id, &new_manga.staff, &pg_pool)
+        .and_then(|id| create_relations(&id, &new_manga.relations, &pg_pool))
         .map(|id| HttpResponse::Ok().json(id))
         .map_err(|e| HttpResponse::InternalServerError().json(e.to_string()))
 
