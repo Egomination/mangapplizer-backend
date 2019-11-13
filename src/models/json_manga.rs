@@ -76,7 +76,7 @@ pub struct Relation {
     pub image: String,
 }
 
-#[derive(Serialize, Deserialize, Clone)]
+#[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct Staff {
     #[serde(rename = "anilistId")]
     pub anilist_id: i64,
@@ -86,7 +86,7 @@ pub struct Staff {
     pub description: String,
 }
 
-#[derive(Serialize, Deserialize, Clone)]
+#[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct Picture {
     pub large:  String,
     pub medium: String,
