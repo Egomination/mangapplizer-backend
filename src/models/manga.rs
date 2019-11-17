@@ -90,8 +90,9 @@ impl<'a> NewManga<'a> {
 // TODO: put resp into separate file or into more proper file
 #[derive(Serialize)]
 pub struct Resp {
-    pub manga: Manga,
-    pub staff: Vec<crate::models::staff::Staff>,
+    pub manga:    Manga,
+    pub staff:    Vec<crate::models::staff::Staff>,
+    pub relation: Vec<crate::models::relation::Relation>,
 }
 
 impl Manga {
@@ -103,10 +104,14 @@ impl Manga {
         use crate::diesel::QueryDsl;
         use crate::diesel::RunQueryDsl;
         use crate::models::{
+            media::Media,
+            relation::Relation,
             series::Series,
             staff::Staff,
         };
         use crate::schema::{
+            media,
+            relations,
             series,
             staffs,
         };
@@ -128,10 +133,24 @@ impl Manga {
                     .unwrap()
             })
             .collect::<Vec<Staff>>();
+        let relations: Result<Vec<Media>, diesel::result::Error> = media::table
+            .filter(media::manga_id.eq(uid))
+            .get_results(connection);
+        let relation_vec: Vec<Relation> = relations
+            .into_iter()
+            .flatten()
+            .flat_map(|r| {
+                relations::table
+                    .filter(relations::id.eq(r.relation_id))
+                    .get_results(connection)
+                    .unwrap()
+            })
+            .collect::<Vec<Relation>>();
 
         Ok(Resp {
-            manga: manga,
-            staff: staff_vec,
+            manga:    manga,
+            staff:    staff_vec,
+            relation: relation_vec,
         })
     }
 }

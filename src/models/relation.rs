@@ -1,7 +1,7 @@
 use crate::schema::relations;
 use diesel::PgConnection;
 
-#[derive(Queryable, Identifiable, Associations, Debug)]
+#[derive(Serialize, Queryable, Identifiable, Associations, Debug)]
 #[table_name = "relations"]
 pub struct Relation {
     pub id:                uuid::Uuid,
