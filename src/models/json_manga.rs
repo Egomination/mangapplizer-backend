@@ -100,9 +100,9 @@ impl std::fmt::Display for Date {
         write!(
             f,
             "{:?}/{:?}/{:?}",
-            self.year.unwrap_or_else(|| -1),
-            self.month.unwrap_or_else(|| -1),
-            self.day.unwrap_or_else(|| -1)
+            self.year.unwrap_or(-1),
+            self.month.unwrap_or(-1),
+            self.day.unwrap_or(-1)
         )
     }
 }
