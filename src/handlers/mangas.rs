@@ -145,10 +145,6 @@ pub fn create(
         .and_then(|id| create_relations(&id, &new_manga.relations, &pg_pool))
         .map(|id| HttpResponse::Ok().json(id))
         .map_err(|e| HttpResponse::InternalServerError().json(e.to_string()))
-
-    // m.create(&pg_pool)
-    //     .map(|manga| HttpResponse::Ok().json(manga))
-    //     .map_err(|e| HttpResponse::InternalServerError().json(e.to_string()))
 }
 
 pub fn find(
