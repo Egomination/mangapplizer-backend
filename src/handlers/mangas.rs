@@ -7,6 +7,7 @@ use crate::models::{
     manga,
     media,
     relation,
+    response,
     series,
     staff,
 };
@@ -155,7 +156,7 @@ pub fn find(
     pool: web::Data<PgPool>,
 ) -> Result<HttpResponse, HttpResponse> {
     let pg_pool = pg_pool_handler(pool)?;
-    manga::Manga::full(manga_id, &pg_pool)
+    response::Response::full(manga_id, &pg_pool)
         .map(|res| HttpResponse::Ok().json(res))
         .map_err(|e| HttpResponse::InternalServerError().json(e.to_string()))
 }
