@@ -143,3 +143,13 @@ pub fn create(
     //     .map(|manga| HttpResponse::Ok().json(manga))
     //     .map_err(|e| HttpResponse::InternalServerError().json(e.to_string()))
 }
+
+pub fn find(
+    manga_id: String,
+    pool: web::Data<PgPool>,
+) -> Result<HttpResponse, HttpResponse> {
+    let pg_pool = pg_pool_handler(pool)?;
+    manga::Manga::full(manga_id, &pg_pool)
+        .map(|res| HttpResponse::Ok().json(res))
+        .map_err(|e| HttpResponse::InternalServerError().json(e.to_string()))
+}

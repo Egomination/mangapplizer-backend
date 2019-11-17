@@ -10,11 +10,15 @@ CREATE TABLE mangas(
       start_date text NOT NULL,
       end_date text NOT NULL,
       status text NOT NULL,
-      title text NOT NULL,
       description text NOT NULL,
       total_chapters text,
       volumes text,
-      genres text[] NOT NULL default '{}',
+      english_title text NOT NULL,
+      romaji_title text NOT NULL,
+      native_title text NOT NULL,
+      cover_extra_large text NOT NULL,
+      cover_large text NOT NULL,
+      cover_medium text NOT NULL,
       popularity BIGSERIAL NOT NULL,
       CONSTRAINT mangas_pkey PRIMARY KEY(id)
 )
