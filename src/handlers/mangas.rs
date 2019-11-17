@@ -1,25 +1,21 @@
-use actix_web::{
-    web,
-    HttpRequest,
-    HttpResponse,
-};
-
-use crate::models::json_manga;
-
 use crate::db_connection::{
     PgPool,
     PgPooledConnection,
 };
-
-use diesel::PgConnection;
-
 use crate::models::{
+    json_manga,
     manga,
     media,
     relation,
     series,
     staff,
 };
+use actix_web::{
+    web,
+    HttpRequest,
+    HttpResponse,
+};
+use diesel::PgConnection;
 
 fn pg_pool_handler(
     pool: web::Data<PgPool>
@@ -118,23 +114,33 @@ pub fn create(
 ) -> Result<HttpResponse, HttpResponse> {
     let pg_pool = pg_pool_handler(pool)?;
 
+    let null_msg = "".to_string();
+
     let m = manga::NewManga {
-        anilist_id:     new_manga.anilist_id,
-        cover_image:    new_manga.cover_image.large.to_owned(),
-        banner_image:   new_manga.banner_image.to_owned(),
-        start_date:     new_manga.start_date.to_owned().to_string(),
-        end_date:       new_manga.end_date.to_owned().to_string(),
-        status:         new_manga.status.to_owned(),
-        title:          new_manga.manga_name.native.to_owned(),
-        description:    new_manga.description.to_owned(),
-        total_chapters: new_manga.total_chapters.to_owned(),
-        volumes:        new_manga.volumes.to_owned(),
-        genres:         new_manga.genres.to_owned(),
-        popularity:     new_manga.popularity,
+        anilist_id:        new_manga.anilist_id,
+        cover_image:       &new_manga.cover_image.large,
+        banner_image:      &new_manga.banner_image,
+        start_date:        &new_manga.start_date.to_string(),
+        end_date:          &new_manga.end_date.to_string(),
+        status:            &new_manga.status,
+        description:       &new_manga.description,
+        total_chapters:    serde::export::Some(
+            &new_manga.total_chapters.as_ref().unwrap_or(&null_msg),
+        ),
+        volumes:           serde::export::Some(
+            &new_manga.volumes.as_ref().unwrap_or(&null_msg),
+        ),
+        english_title:     &new_manga.manga_name.english,
+        romaji_title:      &new_manga.manga_name.romaji,
+        native_title:      &new_manga.manga_name.native,
+        cover_extra_large: &new_manga.cover_image.extra_large,
+        cover_large:       &new_manga.cover_image.large,
+        cover_medium:      &new_manga.cover_image.medium,
+        popularity:        new_manga.popularity,
     };
 
-    let response: manga::Manga = m.create(&pg_pool).unwrap();
-    create_staffs(&response.id, &new_manga.staff, &pg_pool)
+    m.create(&pg_pool)
+        .and_then(|r| create_staffs(&r.id, &new_manga.staff, &pg_pool))
         .and_then(|id| create_relations(&id, &new_manga.relations, &pg_pool))
         .map(|id| HttpResponse::Ok().json(id))
         .map_err(|e| HttpResponse::InternalServerError().json(e.to_string()))

@@ -30,7 +30,7 @@ fn main() {
             .data(db_connection::establish_connection())
             .service(
                 web::resource("/mangas")
-                    .route(web::get().to_async(handlers::mangas::index))
+                    .route(web::get().to_async(handlers::mangas::find))
                     .route(web::post().to_async(handlers::mangas::create)),
             )
     })
