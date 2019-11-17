@@ -4,6 +4,7 @@ use diesel::PgConnection;
 // Return type from the db
 #[derive(
     Queryable,
+    QueryableByName,
     Identifiable,
     Associations,
     Debug,
@@ -11,6 +12,7 @@ use diesel::PgConnection;
     Deserialize,
     AsChangeset,
 )]
+#[table_name = "mangas"]
 pub struct Manga {
     pub id:             uuid::Uuid,
     pub created_at:     Option<std::time::SystemTime>,

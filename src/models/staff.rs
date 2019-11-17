@@ -1,7 +1,16 @@
 use crate::schema::staffs;
 use diesel::PgConnection;
 
-#[derive(Queryable, Identifiable, Associations, Debug)]
+#[derive(
+    QueryableByName,
+    Queryable,
+    Identifiable,
+    Associations,
+    Serialize,
+    Deserialize,
+    Debug,
+)]
+#[table_name = "staffs"]
 pub struct Staff {
     pub id:          uuid::Uuid,
     pub created_at:  Option<std::time::SystemTime>,

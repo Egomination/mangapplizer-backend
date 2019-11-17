@@ -5,7 +5,15 @@ use crate::models::{
 use crate::schema::series;
 use diesel::PgConnection;
 
-#[derive(Queryable, Identifiable, Associations, Debug)]
+#[derive(
+    QueryableByName,
+    Queryable,
+    Identifiable,
+    Associations,
+    Serialize,
+    Deserialize,
+    Debug,
+)]
 #[belongs_to(manga::Manga)]
 #[belongs_to(staff::Staff)]
 #[table_name = "series"]
