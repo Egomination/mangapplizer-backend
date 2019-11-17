@@ -40,9 +40,9 @@ impl Response {
         let staff_vec: Vec<Staff> = series
             .into_iter()
             .flatten()
-            .flat_map(|k| {
+            .flat_map(|s| {
                 staffs::table
-                    .filter(staffs::id.eq(k.staff_id))
+                    .filter(staffs::id.eq(s.staff_id))
                     .get_results(connection)
                     .unwrap()
             })
