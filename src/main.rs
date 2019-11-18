@@ -22,6 +22,8 @@ use actix_web::{
 };
 
 fn main() {
+    std::env::set_var("RUST_LOG", "actix_web=debug");
+    env_logger::init();
     let sys = actix::System::new("mangapplizer_backend");
 
     HttpServer::new(|| {
