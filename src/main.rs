@@ -20,8 +20,6 @@ use actix_web::{
     App,
     HttpServer,
 };
-// use mangapplizer_backend::test_print_data;
-// use mangapplizer_backend::test_get_data_from_db;
 
 fn main() {
     let sys = actix::System::new("mangapplizer_backend");
@@ -44,16 +42,6 @@ fn main() {
     .bind("0.0.0.0:9092")
     .unwrap()
     .start();
-
-    // HttpServer::new(||  {
-    //     App::new().service(
-    //         web::resource("/mangas")
-    //             .route(web::get().to_async(handlers::mangas::index)),
-    //     )
-    // })
-    // .bind("0.0.0.0:9092")
-    // .unwrap()
-    // .start();
 
     println!("Started!");
     let _ = sys.run();
