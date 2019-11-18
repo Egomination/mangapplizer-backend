@@ -15,6 +15,7 @@ extern crate serde_json;
 extern crate serde_derive;
 
 use actix_web::{
+    middleware,
     web,
     App,
     HttpServer,
@@ -27,11 +28,17 @@ fn main() {
 
     HttpServer::new(|| {
         App::new()
+            .wrap(middleware::Compress::default())
+            .wrap(middleware::Logger::default())
             .data(db_connection::establish_connection())
             .service(
                 web::resource("/mangas")
-                    .route(web::get().to_async(handlers::mangas::find))
+                    .route(web::get().to_async(handlers::mangas::index))
                     .route(web::post().to_async(handlers::mangas::create)),
+            )
+            .service(
+                web::resource("/mangas/{manga_id}")
+                    .route(web::get().to_async(handlers::mangas::find)),
             )
     })
     .bind("0.0.0.0:9092")
