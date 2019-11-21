@@ -23,3 +23,5 @@ Refactor    = ["refactor"]
 Revert      = ["revert"]
 # Adds missing tests or correcting existing tests
 Test        = ["test"]
+# Styling and formatting
+Style       = ["style"]
