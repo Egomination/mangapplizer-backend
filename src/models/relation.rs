@@ -13,21 +13,21 @@ pub struct Relation {
     pub relationship_type: String,
     pub status:            String,
     pub title:             String,
-    pub banner_image:      String,
+    pub banner_image:      Option<String>,
 }
 
 #[derive(Insertable, Debug)]
 #[table_name = "relations"]
-pub struct NewRelation {
-    pub media_type:        String,
+pub struct NewRelation<'a> {
+    pub media_type:        &'a str,
     pub anilist_id:        i64,
-    pub relationship_type: String,
-    pub status:            String,
-    pub title:             String,
-    pub banner_image:      String,
+    pub relationship_type: &'a str,
+    pub status:            &'a str,
+    pub title:             &'a str,
+    pub banner_image:      Option<&'a str>,
 }
 
-impl NewRelation {
+impl<'a> NewRelation<'a> {
     pub fn create(
         &self,
         connection: &PgConnection,
