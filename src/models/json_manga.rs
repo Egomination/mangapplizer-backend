@@ -39,6 +39,7 @@ pub struct Manga {
     pub manga_link_array: Vec<HashMap<String, String>>,
     pub staff: Vec<Staff>,
     pub relations: Vec<Relation>,
+    pub tags: Vec<Tag>,
 }
 
 #[derive(Serialize, Deserialize, Clone)]
@@ -90,6 +91,15 @@ pub struct Staff {
 pub struct Picture {
     pub large:  String,
     pub medium: String,
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub struct Tag {
+    pub name: String,
+    pub category: String,
+    #[serde(rename = "isMediaSpoiler")]
+    pub is_spoiler: bool,
+    pub description: String,
 }
 
 impl std::fmt::Display for Date {

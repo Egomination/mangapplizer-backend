@@ -5,3 +5,5 @@ pub mod relation;
 pub mod response;
 pub mod series;
 pub mod staff;
+pub mod tag;
+pub mod tag_lists;

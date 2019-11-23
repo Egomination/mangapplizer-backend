@@ -2,15 +2,7 @@ use crate::db_connection::{
     PgPool,
     PgPooledConnection,
 };
-use crate::models::{
-    json_manga,
-    manga,
-    media,
-    relation,
-    response,
-    series,
-    staff,
-};
+use crate::models::*;
 use actix_web::{
     web,
     HttpRequest,
@@ -109,6 +101,43 @@ fn create_relations(
     Ok(*manga_id)
 }
 
+fn create_tags(
+    manga_id: &uuid::Uuid,
+    tags: &Vec<json_manga::Tag>,
+    pg_pool: &PgConnection,
+) -> Result<uuid::Uuid, diesel::result::Error> {
+    for tag in tags.to_owned() {
+        let t = tag::NewTag {
+            tag_name:    &tag.name,
+            category:    &tag.category,
+            is_spoiler:  tag.is_spoiler,
+            description: &tag.description,
+        };
+        let resp = t.create(&pg_pool);
+        match resp {
+            Err(e) => return Err(e),
+            Ok(response) => {
+                ({
+                    let tag_list = tag_lists::NewTagList {
+                        manga_id: *manga_id,
+                        tag_id:   response.id,
+                    };
+                    let resp: Result<
+                        tag_lists::TagList,
+                        diesel::result::Error,
+                    > = tag_list.create(&pg_pool);
+                    match resp {
+                        Err(e) => return Err(e),
+                        Ok(_response) => (),
+                    }
+                })
+            }
+        }
+    }
+
+    Ok(*manga_id)
+}
+
 pub fn create(
     new_manga: web::Json<json_manga::Manga>,
     pool: web::Data<PgPool>,
@@ -141,7 +170,7 @@ pub fn create(
     };
 
     m.create(&pg_pool)
-        .and_then(|r| create_staffs(&r.id, &new_manga.staff, &pg_pool))
+        .and_then(|manga| create_staffs(&manga.id, &new_manga.staff, &pg_pool))
         .and_then(|id| create_relations(&id, &new_manga.relations, &pg_pool))
         .map(|id| HttpResponse::Ok().json(id))
         .map_err(|e| HttpResponse::InternalServerError().json(e.to_string()))
