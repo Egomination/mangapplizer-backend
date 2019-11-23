@@ -1,6 +1,6 @@
 [package]
 name = "mangapplizer_backend"
-version = "0.1.0"
+version = "0.3.0"
 authors = ["Taylan Dogan <doganntaylan@gmail.com>"]
 edition = "2018"
 
