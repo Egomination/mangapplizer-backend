@@ -38,10 +38,18 @@ impl NewStaff {
         &self,
         connection: &PgConnection,
     ) -> Result<Staff, diesel::result::Error> {
+        use crate::schema::staffs::columns::staff_name;
+        use diesel::ExpressionMethods;
         use diesel::RunQueryDsl;
 
+        // Checks if there's a staff in the table.
+        // if it exists, we just update the updated at table
+        // then use the staff uuid for another insertions
         diesel::insert_into(staffs::table)
             .values(self)
+            .on_conflict(staff_name)
+            .do_update()
+            .set(staffs::updated_at.eq(std::time::SystemTime::now()))
             .get_result(connection)
     }
 }

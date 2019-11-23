@@ -27,7 +27,7 @@ pub fn index(
     Ok(HttpResponse::Ok().json(manga::MangaList::list(&pg_pool)))
 }
 
-// TODO: Check https://doc.rust-lang.org/rust-by-example/error/iter_result.html
+// NOTE: Check https://doc.rust-lang.org/rust-by-example/error/iter_result.html
 // for more idiomatic implementation for belove function
 fn create_staffs(
     manga_id: &uuid::Uuid,
