@@ -1,4 +1,20 @@
 table! {
+    genre_lists (id) {
+        id -> Int8,
+        manga_id -> Uuid,
+        genre_id -> Int8,
+    }
+}
+
+table! {
+    genres (id) {
+        id -> Int8,
+        genre_name -> Text,
+        description -> Nullable<Text>,
+    }
+}
+
+table! {
     mangas (id) {
         id -> Uuid,
         created_at -> Nullable<Timestamp>,
@@ -42,7 +58,7 @@ table! {
         relationship_type -> Text,
         status -> Text,
         title -> Text,
-        banner_image -> Text,
+        banner_image -> Nullable<Text>,
     }
 }
 
@@ -68,15 +84,41 @@ table! {
     }
 }
 
+table! {
+    tags (id) {
+        id -> Int8,
+        tag_name -> Text,
+        category -> Text,
+        is_spoiler -> Bool,
+        description -> Text,
+    }
+}
+
+table! {
+    tags_lists (id) {
+        id -> Int8,
+        manga_id -> Uuid,
+        tag_id -> Int8,
+    }
+}
+
+joinable!(genre_lists -> genres (genre_id));
+joinable!(genre_lists -> mangas (manga_id));
 joinable!(media -> mangas (manga_id));
 joinable!(media -> relations (relation_id));
 joinable!(series -> mangas (manga_id));
 joinable!(series -> staffs (staff_id));
+joinable!(tags_lists -> mangas (manga_id));
+joinable!(tags_lists -> tags (tag_id));
 
 allow_tables_to_appear_in_same_query!(
+    genre_lists,
+    genres,
     mangas,
     media,
     relations,
     series,
     staffs,
+    tags,
+    tags_lists,
 );
