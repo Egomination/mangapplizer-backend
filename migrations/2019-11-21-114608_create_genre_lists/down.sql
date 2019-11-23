@@ -1,2 +1,2 @@
 -- This file should undo anything in `up.sql`
-DROP TABLE genre_lists
+DROP TABLE genres_lists
