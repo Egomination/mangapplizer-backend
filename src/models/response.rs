@@ -5,6 +5,7 @@ pub struct Response {
     pub manga:     crate::models::manga::Manga,
     pub staffs:    Vec<crate::models::staff::Staff>,
     pub relations: Vec<crate::models::relation::Relation>,
+    pub genres:    Vec<crate::models::genre::Genre>,
 }
 
 impl Response {
@@ -16,6 +17,8 @@ impl Response {
         use crate::diesel::QueryDsl;
         use crate::diesel::RunQueryDsl;
         use crate::models::{
+            genre::Genre,
+            genre_lists::GenreList,
             manga::Manga,
             media::Media,
             relation::Relation,
@@ -23,6 +26,8 @@ impl Response {
             staff::Staff,
         };
         use crate::schema::{
+            genres,
+            genres_lists,
             mangas,
             media,
             relations,
@@ -60,11 +65,26 @@ impl Response {
                     .unwrap()
             })
             .collect::<Vec<Relation>>();
+        let genres: Result<Vec<GenreList>, diesel::result::Error> =
+            genres_lists::table
+                .filter(genres_lists::manga_id.eq(uid))
+                .get_results(connection);
+        let genre_vec: Vec<Genre> = genres
+            .into_iter()
+            .flatten()
+            .flat_map(|g| {
+                genres::table
+                    .filter(genres::id.eq(g.genre_id))
+                    .get_results(connection)
+                    .unwrap()
+            })
+            .collect::<Vec<Genre>>();
 
         Ok(Response {
             manga:     manga,
             staffs:    staff_vec,
             relations: relation_vec,
+            genres:    genre_vec,
         })
     }
 }
