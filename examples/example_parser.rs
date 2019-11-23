@@ -50,16 +50,16 @@ pub struct CoverImage {
 
 #[derive(Serialize, Deserialize)]
 pub struct Date {
-    year: Option<i64>,
+    year:  Option<i64>,
     month: Option<i64>,
-    day: Option<i64>,
+    day:   Option<i64>,
 }
 
 #[derive(Serialize, Deserialize)]
 pub struct MangaName {
-    romaji: String,
+    romaji:  String,
     english: String,
-    native: String,
+    native:  String,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -87,6 +87,6 @@ pub struct Staff {
 
 #[derive(Serialize, Deserialize)]
 pub struct Picture {
-    large: String,
+    large:  String,
     medium: String,
 }

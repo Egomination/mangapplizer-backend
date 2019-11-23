@@ -1,4 +1,20 @@
 table! {
+    genres (id) {
+        id -> Int8,
+        genre_name -> Text,
+        description -> Nullable<Text>,
+    }
+}
+
+table! {
+    genres_lists (id) {
+        id -> Int8,
+        manga_id -> Uuid,
+        genre_id -> Int8,
+    }
+}
+
+table! {
     mangas (id) {
         id -> Uuid,
         created_at -> Nullable<Timestamp>,
@@ -10,7 +26,16 @@ table! {
         start_date -> Text,
         end_date -> Text,
         status -> Text,
-        title -> Text,
+        description -> Text,
+        total_chapters -> Nullable<Text>,
+        volumes -> Nullable<Text>,
+        english_title -> Text,
+        romaji_title -> Text,
+        native_title -> Text,
+        cover_extra_large -> Text,
+        cover_large -> Text,
+        cover_medium -> Text,
+        popularity -> Int8,
     }
 }
 
@@ -33,7 +58,7 @@ table! {
         relationship_type -> Text,
         status -> Text,
         title -> Text,
-        banner_image -> Text,
+        banner_image -> Nullable<Text>,
     }
 }
 
@@ -52,15 +77,48 @@ table! {
         updated_at -> Nullable<Timestamp>,
         deleted_at -> Nullable<Timestamp>,
         anilist_id -> Int8,
-        role -> Text,
-        name -> Text,
+        staff_role -> Text,
+        staff_name -> Text,
         image -> Text,
+        description -> Text,
     }
 }
 
+table! {
+    tags (id) {
+        id -> Int8,
+        tag_name -> Text,
+        category -> Text,
+        is_spoiler -> Bool,
+        description -> Text,
+    }
+}
+
+table! {
+    tags_lists (id) {
+        id -> Int8,
+        manga_id -> Uuid,
+        tag_id -> Int8,
+    }
+}
+
+joinable!(genres_lists -> genres (genre_id));
+joinable!(genres_lists -> mangas (manga_id));
 joinable!(media -> mangas (manga_id));
 joinable!(media -> relations (relation_id));
 joinable!(series -> mangas (manga_id));
 joinable!(series -> staffs (staff_id));
+joinable!(tags_lists -> mangas (manga_id));
+joinable!(tags_lists -> tags (tag_id));
 
-allow_tables_to_appear_in_same_query!(mangas, media, relations, series, staffs,);
+allow_tables_to_appear_in_same_query!(
+    genres,
+    genres_lists,
+    mangas,
+    media,
+    relations,
+    series,
+    staffs,
+    tags,
+    tags_lists,
+);

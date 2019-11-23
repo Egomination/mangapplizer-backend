@@ -9,6 +9,6 @@ CREATE TABLE relations(
        relationship_type text NOT NULL,
        status text NOT NULL,
        title text NOT NULL,
-       banner_image text NOT NULL,
+       banner_image text,
        CONSTRAINT relations_pkey PRIMARY KEY(id)
 )

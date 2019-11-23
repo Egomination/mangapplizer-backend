@@ -1,105 +1,134 @@
-#[macro_use]
-extern crate diesel;
-extern crate dotenv;
+// #[macro_use]
+// extern crate diesel;
+// extern crate dotenv;
 
-pub mod models;
-pub mod schema;
+// pub mod models;
+// pub mod schema;
 
-// use schema::*;
-// use models::*;
+// use crate::models::*;
 
-use diesel::pg::PgConnection;
-use diesel::prelude::*;
-use dotenv::dotenv;
-use std::env;
+// pub fn establish_connection() -> PgConnection {
+//     dotenv().ok();
 
-pub fn establish_connection() -> PgConnection {
-    dotenv().ok();
+//     let database_url =
+//         env::var("DATABASE_URL").expect("DATABASE_URL must be set!");
+//     PgConnection::establish(&database_url)
+//         .expect(&format!("Error connection to {}", database_url))
+// }
 
-    let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set!");
-    PgConnection::establish(&database_url).expect(&format!("Error connection to {}", database_url))
-}
+// fn insert_test_data(conn: &PgConnection) -> manga::Manga {
+//     let manga = manga::NewManga {
+//         anilist_id:   1,
+//         cover_image:  "some bullshit".to_string(),
+//         banner_image: "another_bullshit".to_string(),
+//         start_date:   "00.00.00".to_string(),
+//         end_date:     "11.11.11".to_string(),
+//         status:       "finished".to_string(),
+//         title:        "ehe".to_string(),
+//     };
 
-fn insert_test_data(conn: &PgConnection) -> models::Manga {
-    let manga = models::NewManga {
-        anilist_id: 1,
-        cover_image: "some bullshit".to_string(),
-        banner_image: "another_bullshit".to_string(),
-        start_date: "00.00.00".to_string(),
-        end_date: "11.11.11".to_string(),
-        status: "finished".to_string(),
-        title: "ehe".to_string(),
-    };
+//     let staff = staff::NewStaff {
+//         anilist_id: 1,
+//         image:      "some-link.com".to_string(),
+//         name:       "Onez".to_string(),
+//         role:       "Author".to_string(),
+//     };
 
-    let staff = models::NewStaff {
-        anilist_id: 1,
-        image: "some-link.com".to_string(),
-        name: "Onez".to_string(),
-        role: "Author".to_string(),
-    };
+//     let relation = relation::NewRelation {
+//         media_type:        "Anime".to_string(),
+//         anilist_id:        111,
+//         status:            "On-going".to_string(),
+//         title:             "Ehe on roll".to_string(),
+//         relationship_type: "Adaptation".to_string(),
+//         banner_image:      "some-link-again.com".to_string(),
+//     };
 
-    let relation = models::NewRelation {
-        media_type: "Anime".to_string(),
-        anilist_id: 111,
-        status: "On-going".to_string(),
-        title: "Ehe on roll".to_string(),
-        relationship_type: "Adaptation".to_string(),
-        banner_image: "some-link-again.com".to_string(),
-    };
+//     let m: manga::Manga = diesel::insert_into(schema::mangas::table)
+//         .values(&manga)
+//         .get_result(conn)
+//         .expect("Error cannot insert manga");
 
-    let m: models::Manga = diesel::insert_into(schema::mangas::table)
-        .values(&manga)
-        .get_result(conn)
-        .expect("Error cannot insert manga");
+//     let r: relation::Relation = diesel::insert_into(schema::relations::table)
+//         .values(&relation)
+//         .get_result(conn)
+//         .expect("Error cannot insert relation");
 
-    let r: models::Relation = diesel::insert_into(schema::relations::table)
-        .values(&relation)
-        .get_result(conn)
-        .expect("Error cannot insert relation");
+//     let s: staff::Staff = diesel::insert_into(schema::staffs::table)
+//         .values(&staff)
+//         .get_result(conn)
+//         .expect("Error cannot insert relation");
 
-    let s: models::Staff = diesel::insert_into(schema::staffs::table)
-        .values(&staff)
-        .get_result(conn)
-        .expect("Error cannot insert relation");
+//     // Do the association !! This is the crucial part.
+//     let m_r = media::NewMedia {
+//         manga_id:    m.id,
+//         relation_id: r.id,
+//     };
 
-    // Do the association !! This is the crucial part.
+//     let m_s = series::NewSeries {
+//         manga_id: m.id,
+//         staff_id: s.id,
+//     };
 
-    let m_r = models::NewMedia {
-        manga_id: m.id,
-        relation_id: r.id,
-    };
+//     diesel::insert_into(schema::media::table)
+//         .values(&m_r)
+//         .execute(conn)
+//         .expect("error associating while manga and relation");
 
-    let m_s = models::NewSeries {
-        manga_id: m.id,
-        staff_id: s.id,
-    };
+//     diesel::insert_into(schema::series::table)
+//         .values(&m_s)
+//         .execute(conn)
+//         .expect("error associating while manga and staff");
 
-    diesel::insert_into(schema::media::table)
-        .values(&m_r)
-        .execute(conn)
-        .expect("error associating while manga and relation");
+//     m
+// }
 
-    diesel::insert_into(schema::series::table)
-        .values(&m_s)
-        .execute(conn)
-        .expect("error associating while manga and staff");
+// fn get_full_relation(
+//     manga: &manga::Manga,
+//     conn: &PgConnection,
+// ) -> std::vec::Vec<staff::Staff> {
+//     use diesel::pg::expression::dsl::any;
 
-    m
-}
+//     let manga_staff =
+//         series::Series::belonging_to(manga).select(schema::series::staff_id);
+//     schema::staffs::table
+//         .filter(schema::staffs::id.eq(any(manga_staff)))
+//         .load::<staff::Staff>(conn)
+//         .expect("Could not load tags")
+// }
 
-fn get_full_relation(manga: &models::Manga, conn: &PgConnection) -> std::vec::Vec<models::Staff> {
-    use diesel::pg::expression::dsl::any;
+// pub fn test_get_data_from_db(uuid: uuid::Uuid) {
+//     use crate::schema::mangas::dsl::*;
 
-    let manga_staff = models::Series::belonging_to(manga).select(schema::series::staff_id);
-    schema::staffs::table
-        .filter(schema::staffs::id.eq(any(manga_staff)))
-        .load::<models::Staff>(conn)
-        .expect("Could not load tags")
-}
+//     let conn = establish_connection();
 
-pub fn test_print_data() {
-    let conn = establish_connection();
-    let a = insert_test_data(&conn);
-    let b = get_full_relation(&a, &conn);
-    println!("{:#?}", b);
-}
+//     let r = mangas
+//         .filter(title.like("ehe"))
+//         .load::<manga::Manga>(&conn)
+//         .expect("Error loading manga");
+
+//     println!("{:#?}", r);
+
+//     let _m = get_manga_by_id(uuid, &conn);
+// }
+
+// pub fn get_manga_by_id(
+//     manga_id: uuid::Uuid,
+//     conn: &PgConnection,
+// ) -> std::vec::Vec<models::manga::Manga> {
+//     use crate::schema::mangas::dsl::*;
+
+//     let response = mangas
+//         .filter(id.eq(manga_id))
+//         .load::<manga::Manga>(conn)
+//         .expect("error searching manga");
+
+//     println!("{:#?}", response);
+//     response
+// }
+
+// pub fn test_print_data() {
+//     let conn = establish_connection();
+//     let a = insert_test_data(&conn);
+//     let b = get_full_relation(&a, &conn);
+//     println!("{:#?}", b);
+// }

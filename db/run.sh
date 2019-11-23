@@ -1,5 +1,8 @@
 #!/bin/sh
 
+rm -rf ./psql
+mkdir -p psql
+
 # TODO: Improve this script.
 
 export POSTGRES_PW=1
