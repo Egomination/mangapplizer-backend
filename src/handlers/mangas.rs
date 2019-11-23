@@ -138,6 +138,41 @@ fn create_tags(
     Ok(*manga_id)
 }
 
+fn create_genres(
+    manga_id: &uuid::Uuid,
+    genres: &Vec<String>,
+    pg_pool: &PgConnection,
+) -> Result<uuid::Uuid, diesel::result::Error> {
+    for genre in genres.to_owned() {
+        let g = genre::NewGenre {
+            genre_name:  &genre,
+            description: "",
+        };
+        let resp = g.create(&pg_pool);
+        match resp {
+            Err(e) => return Err(e),
+            Ok(response) => {
+                ({
+                    let genre_list = genre_lists::NewGenreList {
+                        manga_id: *manga_id,
+                        genre_id: response.id,
+                    };
+                    let resp: Result<
+                        genre_lists::GenreList,
+                        diesel::result::Error,
+                    > = genre_list.create(&pg_pool);
+                    match resp {
+                        Err(e) => return Err(e),
+                        Ok(_response) => (),
+                    }
+                })
+            }
+        }
+    }
+
+    Ok(*manga_id)
+}
+
 pub fn create(
     new_manga: web::Json<json_manga::Manga>,
     pool: web::Data<PgPool>,
@@ -172,6 +207,8 @@ pub fn create(
     m.create(&pg_pool)
         .and_then(|manga| create_staffs(&manga.id, &new_manga.staff, &pg_pool))
         .and_then(|id| create_relations(&id, &new_manga.relations, &pg_pool))
+        .and_then(|id| create_genres(&id, &new_manga.genres, &pg_pool))
+        .and_then(|id| create_tags(&id, &new_manga.tags, &pg_pool))
         .map(|id| HttpResponse::Ok().json(id))
         .map_err(|e| HttpResponse::InternalServerError().json(e.to_string()))
 }

@@ -1,3 +1,5 @@
+pub mod genre;
+pub mod genre_lists;
 pub mod json_manga;
 pub mod manga;
 pub mod media;
