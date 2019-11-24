@@ -1,0 +1,11 @@
+pub mod genre;
+pub mod genre_lists;
+pub mod json_manga;
+pub mod manga;
+pub mod media;
+pub mod relation;
+pub mod response;
+pub mod series;
+pub mod staff;
+pub mod tag;
+pub mod tag_lists;
