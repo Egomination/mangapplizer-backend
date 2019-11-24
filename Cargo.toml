@@ -18,3 +18,15 @@ serde_derive = "1.0.102"
 serde_json = "1.0.41"
 log = "0.4.0"
 env_logger = "0.7.1"
+
+[profile.dev]
+# This isn't required for development builds, but makes development
+# build behavior match release builds. To enable unwinding panics
+# during development, simply remove this line.
+panic = 'abort'
+
+[profile.release]
+opt-level = 'z'     # Optimize for size. Normally its 3 for binary speed{preffered}
+lto = true          # Enable Link Time Optimization
+codegen-units = 1   # Reduce number of codegen units to increase optimizations.
+panic = 'abort'     # Abort on panic
