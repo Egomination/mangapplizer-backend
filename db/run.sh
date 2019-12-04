@@ -22,7 +22,7 @@ docker run \
        -v $(pwd)/psql:/var/lib/postgresql/data \
        -v $(pwd)/post-install.sh:/post-install-sh.sh \
        -v $(pwd)/crole.sql:/crole.sql \
-       kondanta/postgre-with-rum:latest
+       kondanta/postgres-with-rum:latest
 
 # Start pgadmin4
 # https://www.pgadmin.org/docs/pgadmin4/latest/container_deployment.html
