@@ -10,3 +10,5 @@ make USE_PGXS=1
 make USE_PGXS=1 install
 make USE_PGXS=1 installcheck
 psql postgres -c "CREATE EXTENSION rum;" 
+
+cd - && rm -rf /rum/
