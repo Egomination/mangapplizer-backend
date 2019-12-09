@@ -23,8 +23,8 @@ pub fn index(
     _req: HttpRequest,
     pool: web::Data<PgPool>,
 ) -> Result<HttpResponse, HttpResponse> {
-    let pg_pool = pg_pool_handler(pool)?;
-    Ok(HttpResponse::Ok().json(manga::MangaList::list(&pg_pool)))
+    let _pg_pool = pg_pool_handler(pool)?;
+    Ok(HttpResponse::Ok().json("Ok!"))
 }
 
 // NOTE: Check https://doc.rust-lang.org/rust-by-example/error/iter_result.html

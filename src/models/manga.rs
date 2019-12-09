@@ -57,22 +57,21 @@ pub struct NewManga<'a> {
     pub popularity:        i64,
 }
 
-#[derive(Serialize, Deserialize)]
-pub struct MangaList(pub Vec<Manga>);
+// #[derive(Serialize, Deserialize)]
+// pub struct MangaList(pub Vec<Manga>);
 
-impl MangaList {
-    pub fn list(connection: &PgConnection) -> Self {
-        use crate::schema::mangas::dsl::*;
-        // use diesel::QueryDsl;
-        use diesel::RunQueryDsl;
+// impl MangaList {
+//     pub fn list(connection: &PgConnection) -> Self {
+//         use crate::schema::mangas::dsl::*;
+//         use diesel::RunQueryDsl;
 
-        let result = mangas
-            .load::<Manga>(connection)
-            .expect("Error loading mangas");
+//         let result = mangas
+//             .load::<Manga>(connection)
+//             .expect("Error loading mangas");
 
-        MangaList(result)
-    }
-}
+//         MangaList(result)
+//     }
+// }
 
 impl<'a> NewManga<'a> {
     pub fn create(
