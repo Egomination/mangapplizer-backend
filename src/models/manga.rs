@@ -11,6 +11,7 @@ use diesel::PgConnection;
     Serialize,
     Deserialize,
     AsChangeset,
+    PartialEq,
 )]
 #[table_name = "mangas"]
 pub struct Manga {
@@ -35,8 +36,55 @@ pub struct Manga {
     pub cover_medium:      String,
     pub popularity:        i64,
 }
+
+type MangaColumns = (
+    mangas::id,
+    mangas::created_at,
+    mangas::updated_at,
+    mangas::deleted_at,
+    mangas::anilist_id,
+    mangas::cover_image,
+    mangas::banner_image,
+    mangas::start_date,
+    mangas::end_date,
+    mangas::status,
+    mangas::description,
+    mangas::total_chapters,
+    mangas::volumes,
+    mangas::english_title,
+    mangas::romaji_title,
+    mangas::native_title,
+    mangas::cover_extra_large,
+    mangas::cover_large,
+    mangas::cover_medium,
+    mangas::popularity,
+);
+
+pub const MANGAS_COLUMNS: MangaColumns = (
+    mangas::id,
+    mangas::created_at,
+    mangas::updated_at,
+    mangas::deleted_at,
+    mangas::anilist_id,
+    mangas::cover_image,
+    mangas::banner_image,
+    mangas::start_date,
+    mangas::end_date,
+    mangas::status,
+    mangas::description,
+    mangas::total_chapters,
+    mangas::volumes,
+    mangas::english_title,
+    mangas::romaji_title,
+    mangas::native_title,
+    mangas::cover_extra_large,
+    mangas::cover_large,
+    mangas::cover_medium,
+    mangas::popularity,
+);
+
 // Used when new manga is going to be inserted into the database
-#[derive(Insertable, Debug, Deserialize, AsChangeset)]
+#[derive(Insertable, Debug, Deserialize, AsChangeset, PartialEq)]
 #[table_name = "mangas"]
 pub struct NewManga<'a> {
     pub anilist_id:        i64,
@@ -82,6 +130,7 @@ impl<'a> NewManga<'a> {
 
         diesel::insert_into(mangas::table)
             .values(self)
-            .get_result(connection)
+            .returning(MANGAS_COLUMNS)
+            .get_result::<Manga>(connection)
     }
 }
