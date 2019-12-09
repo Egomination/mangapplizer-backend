@@ -15,6 +15,12 @@ table! {
 }
 
 table! {
+    use diesel::sql_types::Uuid;
+    use diesel_full_text_search::TsVector;
+    use diesel::sql_types::Int8;
+    use diesel::sql_types::Timestamp;
+    use diesel::sql_types::Text;
+    use diesel::sql_types::Nullable;
     mangas (id) {
         id -> Uuid,
         created_at -> Nullable<Timestamp>,
@@ -36,6 +42,7 @@ table! {
         cover_large -> Text,
         cover_medium -> Text,
         popularity -> Int8,
+        text_searchable_mangas -> TsVector,
     }
 }
 
