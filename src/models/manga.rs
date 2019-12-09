@@ -105,21 +105,40 @@ pub struct NewManga<'a> {
     pub popularity:        i64,
 }
 
-// #[derive(Serialize, Deserialize)]
-// pub struct MangaList(pub Vec<Manga>);
+#[derive(Serialize, Deserialize)]
+pub struct MangaList(pub Vec<Manga>);
 
-// impl MangaList {
-//     pub fn list(connection: &PgConnection) -> Self {
-//         use crate::schema::mangas::dsl::*;
-//         use diesel::RunQueryDsl;
+impl MangaList {
+    pub fn list(
+        connection: &PgConnection,
+        search: &str,
+    ) -> Self {
+        use crate::schema;
+        use crate::schema::mangas::dsl::*;
+        use diesel::pg::Pg;
+        use diesel::ExpressionMethods;
+        use diesel::QueryDsl;
+        use diesel::RunQueryDsl;
+        use diesel_full_text_search::{
+            plainto_tsquery,
+            TsRumExtensions,
+            TsVectorExtensions,
+        };
 
-//         let result = mangas
-//             .load::<Manga>(connection)
-//             .expect("Error loading mangas");
+        let mut query = schema::mangas::table.into_boxed::<Pg>();
 
-//         MangaList(result)
-//     }
-// }
+        if !search.is_empty() {
+            query = query
+                .filter(text_searchable_mangas.matches(plainto_tsquery(search)))
+        }
+
+        let result = query
+            .select(MANGAS_COLUMNS)
+            .load::<Manga>(connection)
+            .expect("Error Searching Manga");
+        MangaList(result)
+    }
+}
 
 impl<'a> NewManga<'a> {
     pub fn create(
