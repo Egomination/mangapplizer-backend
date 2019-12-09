@@ -17,14 +17,21 @@ fn pg_pool_handler(
         .map_err(|e| HttpResponse::InternalServerError().json(e.to_string()))
 }
 
+#[derive(Deserialize)]
+pub struct MangaSearch {
+    pub search: String,
+}
+
 // This is calling the list method on ProductList and
 // serializing it to a json response
 pub fn index(
     _req: HttpRequest,
     pool: web::Data<PgPool>,
+    manga_search: web::Query<MangaSearch>,
 ) -> Result<HttpResponse, HttpResponse> {
-    let _pg_pool = pg_pool_handler(pool)?;
-    Ok(HttpResponse::Ok().json("Ok!"))
+    let pg_pool = pg_pool_handler(pool)?;
+    let search = &manga_search.search;
+    Ok(HttpResponse::Ok().json(manga::MangaList::list(&pg_pool, search)))
 }
 
 // NOTE: Check https://doc.rust-lang.org/rust-by-example/error/iter_result.html
