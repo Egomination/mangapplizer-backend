@@ -220,6 +220,31 @@ pub fn create(
         .map_err(|e| HttpResponse::InternalServerError().json(e.to_string()))
 }
 
+#[derive(Deserialize)]
+struct Chapter {
+    id:  i32,
+    url: String,
+}
+
+#[derive(Deserialize)]
+pub struct JsonChapter {
+    manga_name: String,
+    chapters:   Vec<Chapter>,
+}
+
+pub fn insert_chapter(
+    chapter_data: web::Json<JsonChapter>,
+    pool: web::Data<PgPool>,
+) -> Result<HttpResponse, HttpResponse> {
+    let pg_pool = pg_pool_handler(pool)?;
+    let search = &chapter_data.manga_name;
+    let search_result = manga::MangaList::list(&pg_pool, search);
+    if search_result.len() > 1 {
+        return Err(HttpResponse::InternalServerError().json("hata"));
+    }
+    Ok(HttpResponse::Ok().json(search_result))
+}
+
 pub fn find(
     manga_id: web::Path<String>,
     pool: web::Data<PgPool>,
