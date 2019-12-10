@@ -116,12 +116,10 @@ impl MangaList {
         use crate::schema;
         use crate::schema::mangas::dsl::*;
         use diesel::pg::Pg;
-        use diesel::ExpressionMethods;
         use diesel::QueryDsl;
         use diesel::RunQueryDsl;
         use diesel_full_text_search::{
             plainto_tsquery,
-            TsRumExtensions,
             TsVectorExtensions,
         };
 
