@@ -1,6 +1,5 @@
 #!/bin/sh
 
-rm -rf ./psql
 mkdir -p psql
 
 # TODO: Improve this script.
