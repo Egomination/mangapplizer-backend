@@ -40,6 +40,11 @@ fn main() {
                 web::resource("/mangas/{manga_id}")
                     .route(web::get().to_async(handlers::mangas::find)),
             )
+            .service(
+                web::resource("/insert").route(
+                    web::post().to_async(handlers::mangas::insert_chapter),
+                ),
+            )
     })
     .bind("0.0.0.0:9092")
     .unwrap()
