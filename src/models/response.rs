@@ -83,10 +83,10 @@ impl Response {
             .collect::<Vec<Genre>>();
 
         Ok(Response {
-            manga:     manga,
-            staffs:    staff_vec,
+            manga,
+            staffs: staff_vec,
             relations: relation_vec,
-            genres:    genre_vec,
+            genres: genre_vec,
         })
     }
 }
