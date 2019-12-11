@@ -38,7 +38,7 @@ pub fn index(
 // for more idiomatic implementation for belove function
 fn create_staffs(
     manga_id: &uuid::Uuid,
-    staffs: &Vec<json_manga::Staff>,
+    staffs: &[json_manga::Staff],
     pg_pool: &PgConnection,
 ) -> Result<uuid::Uuid, diesel::result::Error> {
     for staff in staffs.to_owned() {
@@ -74,7 +74,7 @@ fn create_staffs(
 
 fn create_relations(
     manga_id: &uuid::Uuid,
-    relations: &Vec<json_manga::Relation>,
+    relations: &[json_manga::Relation],
     pg_pool: &PgConnection,
 ) -> Result<uuid::Uuid, diesel::result::Error> {
     for relation in relations.to_owned() {
@@ -110,7 +110,7 @@ fn create_relations(
 
 fn create_tags(
     manga_id: &uuid::Uuid,
-    tags: &Vec<json_manga::Tag>,
+    tags: &[json_manga::Tag],
     pg_pool: &PgConnection,
 ) -> Result<uuid::Uuid, diesel::result::Error> {
     for tag in tags.to_owned() {
@@ -147,7 +147,7 @@ fn create_tags(
 
 fn create_genres(
     manga_id: &uuid::Uuid,
-    genres: &Vec<String>,
+    genres: &[String],
     pg_pool: &PgConnection,
 ) -> Result<uuid::Uuid, diesel::result::Error> {
     for genre in genres.to_owned() {
