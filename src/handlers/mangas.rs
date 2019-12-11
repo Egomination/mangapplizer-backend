@@ -9,6 +9,19 @@ use actix_web::{
     HttpResponse,
 };
 use diesel::PgConnection;
+use std::collections::HashMap;
+
+/// Page is the chapter pages
+/// [
+///     {
+///         "0": "string",
+///         "1": "str",
+///     },
+///     {
+///         "0": "string",
+///     },
+/// ]
+type Page = HashMap<String, String>;
 
 fn pg_pool_handler(
     pool: web::Data<PgPool>
@@ -220,25 +233,28 @@ pub fn create(
         .map_err(|e| HttpResponse::InternalServerError().json(e.to_string()))
 }
 
-#[derive(Deserialize)]
-struct Chapter {
-    id:  i32,
-    url: String,
+#[derive(Deserialize, Debug, Eq, PartialEq)]
+pub struct Chapter {
+    manga_name: String,
+    chapters:   Vec<Page>,
 }
 
-#[derive(Deserialize)]
-pub struct JsonChapter {
-    manga_name: String,
-    chapters:   Vec<Chapter>,
-}
+// TODO: Iterate over hashmap performing immutable borrow
+// fn do_it(map: &mut HashMap<String, String>) {
+//     for (key, value) in &*map {
+//         println!("{} / {}", key, value);
+//     }
+//     map.clear();
+// }
 
 pub fn insert_chapter(
-    chapter_data: web::Json<JsonChapter>,
+    chapter_data: web::Json<Chapter>,
     pool: web::Data<PgPool>,
 ) -> Result<HttpResponse, HttpResponse> {
     let pg_pool = pg_pool_handler(pool)?;
     let search = &chapter_data.manga_name;
     let search_result = manga::MangaList::list(&pg_pool, search);
+    println!("{:#?}", chapter_data.chapters);
     if search_result.len() > 1 {
         return Err(HttpResponse::InternalServerError().json("hata"));
     }
