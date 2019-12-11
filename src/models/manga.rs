@@ -138,12 +138,11 @@ impl MangaList {
     }
 
     pub fn len(&self) -> usize {
-        // let mut counter = 0;
-        // for elem in self.0 {
-        //     counter += 1
-        // }
-        // counter
         self.0.iter().len()
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.len() == 0
     }
 }
 
