@@ -239,13 +239,12 @@ pub struct Chapter {
     chapters:   Vec<Page>,
 }
 
-// TODO: Iterate over hashmap performing immutable borrow
-// fn do_it(map: &mut HashMap<String, String>) {
-//     for (key, value) in &*map {
-//         println!("{} / {}", key, value);
-//     }
-//     map.clear();
-// }
+fn print_pages(map: &HashMap<String, String>) {
+    for (key, value) in &*map {
+        println!("{} / {}", key, value);
+    }
+    // map.clear();
+}
 
 pub fn insert_chapter(
     chapter_data: web::Json<Chapter>,
@@ -254,7 +253,7 @@ pub fn insert_chapter(
     let pg_pool = pg_pool_handler(pool)?;
     let search = &chapter_data.manga_name;
     let search_result = manga::MangaList::list(&pg_pool, search);
-    println!("{:#?}", chapter_data.chapters);
+    chapter_data.chapters.iter().for_each(|m| print_pages(m));
     if search_result.len() > 1 {
         return Err(HttpResponse::InternalServerError().json("hata"));
     }
