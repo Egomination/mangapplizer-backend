@@ -65,4 +65,24 @@ impl<'a> NewKmChapter<'a> {
         ch_no
     }
 
+    pub fn latest(
+        manga_id: uuid::Uuid,
+        connection: &PgConnection,
+    ) -> i32 {
+        use crate::diesel::ExpressionMethods;
+        use crate::diesel::QueryDsl;
+        use crate::diesel::RunQueryDsl;
+        let manga: Vec<KmChapter> = kissmanga_chapters::table
+            .filter(kissmanga_chapters::manga_id.eq(&manga_id))
+            .get_results(connection)
+            .unwrap();
+
+        let mut ch_no = 1;
+        manga.iter().for_each(|ch| {
+            if ch.chapter_no > ch_no {
+                ch_no = ch.chapter_no
+            }
+        });
+        ch_no
+    }
 }
