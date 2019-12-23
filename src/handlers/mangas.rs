@@ -233,18 +233,12 @@ pub fn create(
         .map_err(|e| HttpResponse::InternalServerError().json(e.to_string()))
 }
 
-#[derive(Deserialize, Debug, Eq, PartialEq)]
+#[derive(Serialize, Deserialize, Debug, Eq, PartialEq)]
 pub struct Chapter {
     manga_name: String,
     chapters:   Vec<Page>,
 }
 
-fn print_pages(map: &HashMap<String, String>) {
-    for (key, value) in &*map {
-        println!("{} / {}", key, value);
-    }
-    // map.clear();
-}
 // fn print_pages(map: &HashMap<String, String>) {
 //     for (key, value) in &*map {
 //         println!("{} / {}", key, value);
@@ -259,11 +253,29 @@ pub fn insert_chapter(
     let pg_pool = pg_pool_handler(pool)?;
     let search = &chapter_data.manga_name;
     let search_result = manga::MangaList::list(&pg_pool, search);
-    chapter_data.chapters.iter().for_each(|m| print_pages(m));
+
+    // I am going to store Page pairs as Json in Postgres
+    let chapter_json_data = serde_json::to_value(&chapter_data.chapters);
+    // chapter_data.chapters.iter().for_each(|m| print_pages(m));
+
+    // TODO: Remove test data
+    let test = kissmanga_chapter::NewKmChapter {
+        manga_id:    uuid::Uuid::parse_str(
+            "603734ee-374a-4ef5-be93-c9e7330e577c",
+        )
+        .unwrap(),
+        source_name: "kissmanga",
+        source_type: "EN",
+        chapter_no:  1,
+        pages:       chapter_json_data.unwrap(),
+    };
+
+    // test.create(&pg_pool);
+
     if search_result.len() > 1 {
         return Err(HttpResponse::InternalServerError().json("hata"));
     }
-    Ok(HttpResponse::Ok().json(search_result))
+    Ok(HttpResponse::Ok().json(test.create(&pg_pool).unwrap()))
 }
 
 pub fn find(
