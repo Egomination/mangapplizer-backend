@@ -1,3 +1,49 @@
+<a name="0.4.0"></a>
+## 0.4.0 (2019-12-23)
+
+
+#### Features
+
+*   add chapter insertion ([b4a33897](https://github.com/Egomination/mangapplizer-backend/commit/b4a338970e8a858d52456a704ba2656a7386db6c))
+*   add log crate ([5ea74ce7](https://github.com/Egomination/mangapplizer-backend/commit/5ea74ce722c4cc436750ce7550c981e0920712ac))
+*   add latest chapter number of the manga ([f77dac70](https://github.com/Egomination/mangapplizer-backend/commit/f77dac706f17768da91bd00f1af9c63a4bf18f6d))
+*   add auto incerement chapter function ([1fffb3e6](https://github.com/Egomination/mangapplizer-backend/commit/1fffb3e66c23b498364602e91291530b0adf2c6c))
+*   test chapter insertion logic ([1408acf4](https://github.com/Egomination/mangapplizer-backend/commit/1408acf435765a060fd74df68f9ef2c169142ff1))
+*   enable diesel serde feature ([a444dfd4](https://github.com/Egomination/mangapplizer-backend/commit/a444dfd420260edc9cc7325caae214ab3f88b59c))
+*   add chapters table's rust binding ([da3f6743](https://github.com/Egomination/mangapplizer-backend/commit/da3f6743b9fa7ca55c286ae9748244e6d34da7d6))
+*   add kissmanga_chapters table ([94384ec4](https://github.com/Egomination/mangapplizer-backend/commit/94384ec438454c2fb5a5c75de5de02f9a2495348))
+*   add print k/v function for chapter pages ([75a538dd](https://github.com/Egomination/mangapplizer-backend/commit/75a538dd9814641411de1240d99dc0301f334e66))
+*   implement is_empty for MangaList struct ([421c9ab5](https://github.com/Egomination/mangapplizer-backend/commit/421c9ab51a099433cb46dac4e4455b073e19cca3))
+*   add chapter parser ([a8d25171](https://github.com/Egomination/mangapplizer-backend/commit/a8d2517105273f198fb1510999c08280355e5430))
+*   start implementing chapter insertion function ([dd449cdb](https://github.com/Egomination/mangapplizer-backend/commit/dd449cdb6a2b94672d1be30ae1f00317ab554161))
+*   add insert manga end-point ([ce2022f2](https://github.com/Egomination/mangapplizer-backend/commit/ce2022f28cd9b9dd121e3b591a1cd2a600d089ef))
+*   add len function for mangalist struct ([ad5c0e1c](https://github.com/Egomination/mangapplizer-backend/commit/ad5c0e1cee12507813fe59b808b7bd4293f3e158))
+*   add FTS search implementation ([a2cfcde5](https://github.com/Egomination/mangapplizer-backend/commit/a2cfcde58d75ff5cf1c1c6b462f7422b78a77995))
+*   add returning columns of the mangas table ([77859f7c](https://github.com/Egomination/mangapplizer-backend/commit/77859f7ce82b246c1fc84bb53bb1499cc97eae90))
+*   disable MangaList struct ([fd645c20](https://github.com/Egomination/mangapplizer-backend/commit/fd645c2076ec8430da8cfc9e6da436f5eea5fcfa))
+*   add tsvector ([7f7b3ad7](https://github.com/Egomination/mangapplizer-backend/commit/7f7b3ad76badc831fbb27eb587905b5cc0689f11))
+*   add docker image for postgres with RUM ([e64e41e4](https://github.com/Egomination/mangapplizer-backend/commit/e64e41e4b143c3211682eb3e0f505bbb76ed1ee0))
+*   add required files to init RUM FTS plugin ([9bd67992](https://github.com/Egomination/mangapplizer-backend/commit/9bd67992092c56cf8adf0aecc30231d3fe322756))
+
+#### Refactor
+
+*   remove redundant key from response struct ([30238f9e](https://github.com/Egomination/mangapplizer-backend/commit/30238f9e48cb7d0ec52e200acacec958462201fa))
+*   change params vec to slice ([ca677613](https://github.com/Egomination/mangapplizer-backend/commit/ca67761394fad347c9632514131ab970cf5d35fa))
+
+#### Build
+
+*   add release and dev profiles ([1d0734ea](https://github.com/Egomination/mangapplizer-backend/commit/1d0734eaddfd66562f5e4842c7bd30f505b728b2))
+
+#### Bug Fixes
+
+*   make optional to remove existing db folder ([01d587b8](https://github.com/Egomination/mangapplizer-backend/commit/01d587b8587c582917e797c70cd3058d1a792087))
+*   remove unused variables ([6be2d2ad](https://github.com/Egomination/mangapplizer-backend/commit/6be2d2adcb6c2394a3aca1d75cf777c6553808e4))
+*   change postgres base image ([d2e6146f](https://github.com/Egomination/mangapplizer-backend/commit/d2e6146fbd96df095298535b1035f3e5f927abc2))
+*   remove rum after it does its job ([02a70e7d](https://github.com/Egomination/mangapplizer-backend/commit/02a70e7d045e4084f757d90609a42f4e2d91389f))
+*   typo ([c63c0df9](https://github.com/Egomination/mangapplizer-backend/commit/c63c0df9b9ea014c7b3d6ec53e0469e67ea760cb))
+
+
+
 <a name="0.3.0"></a>
 ## 0.3.0 (2019-11-23)
 
