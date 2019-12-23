@@ -15,6 +15,17 @@ table! {
 }
 
 table! {
+    kissmanga_chapters (id) {
+        id -> Int8,
+        manga_id -> Uuid,
+        source_name -> Text,
+        source_type -> Text,
+        chapter_no -> Int4,
+        pages -> Jsonb,
+    }
+}
+
+table! {
     use diesel::sql_types::Uuid;
     use diesel_full_text_search::TsVector;
     use diesel::sql_types::Int8;
@@ -111,6 +122,7 @@ table! {
 
 joinable!(genres_lists -> genres (genre_id));
 joinable!(genres_lists -> mangas (manga_id));
+joinable!(kissmanga_chapters -> mangas (manga_id));
 joinable!(media -> mangas (manga_id));
 joinable!(media -> relations (relation_id));
 joinable!(series -> mangas (manga_id));
@@ -121,6 +133,7 @@ joinable!(tags_lists -> tags (tag_id));
 allow_tables_to_appear_in_same_query!(
     genres,
     genres_lists,
+    kissmanga_chapters,
     mangas,
     media,
     relations,
