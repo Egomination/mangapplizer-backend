@@ -9,6 +9,7 @@ use actix_web::{
     HttpResponse,
 };
 use diesel::PgConnection;
+use log;
 use std::collections::HashMap;
 
 /// Page is the chapter pages
