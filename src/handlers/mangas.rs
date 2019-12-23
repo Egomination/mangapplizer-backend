@@ -245,6 +245,12 @@ fn print_pages(map: &HashMap<String, String>) {
     }
     // map.clear();
 }
+// fn print_pages(map: &HashMap<String, String>) {
+//     for (key, value) in &*map {
+//         println!("{} / {}", key, value);
+//     }
+//     // map.clear();
+// }
 
 pub fn insert_chapter(
     chapter_data: web::Json<Chapter>,
