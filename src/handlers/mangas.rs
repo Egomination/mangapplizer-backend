@@ -24,6 +24,10 @@ use std::collections::HashMap;
 /// ]
 type Page = HashMap<String, String>;
 
+// TODO:
+// Create struct that has genre: Genre, manga: Manga ... field. Pass them into
+// the Manga create function and move all of the logic inside the model.
+
 fn pg_pool_handler(
     pool: web::Data<PgPool>
 ) -> Result<PgPooledConnection, HttpResponse> {
@@ -38,7 +42,7 @@ pub struct MangaSearch {
 
 // This is calling the list method on ProductList and
 // serializing it to a json response
-pub fn index(
+pub async fn index(
     _req: HttpRequest,
     pool: web::Data<PgPool>,
     manga_search: web::Query<MangaSearch>,
@@ -194,7 +198,7 @@ fn create_genres(
     Ok(*manga_id)
 }
 
-pub fn create(
+pub async fn create(
     new_manga: web::Json<json_manga::Manga>,
     pool: web::Data<PgPool>,
 ) -> Result<HttpResponse, HttpResponse> {
@@ -246,7 +250,7 @@ pub struct QueryData {
     source_type: String,
 }
 
-pub fn insert_chapter(
+pub async fn insert_chapter(
     chapter_data: web::Json<Chapter>,
     query: web::Query<QueryData>,
     pool: web::Data<PgPool>,
@@ -295,7 +299,7 @@ pub fn insert_chapter(
     Ok(HttpResponse::Ok().json("Chapters inserted!"))
 }
 
-pub fn find(
+pub async fn find(
     manga_id: web::Path<String>,
     pool: web::Data<PgPool>,
 ) -> Result<HttpResponse, HttpResponse> {
