@@ -210,15 +210,19 @@ pub async fn create(
         anilist_id:        new_manga.anilist_id,
         cover_image:       &new_manga.cover_image.large,
         banner_image:      &new_manga.banner_image,
-        start_date:        &new_manga.start_date.to_string(),
-        end_date:          &new_manga.end_date.to_string(),
+        start_date:        new_manga.start_date.to_string(),
+        end_date:          new_manga.end_date.to_string(),
         status:            &new_manga.status,
         description:       &new_manga.description,
         total_chapters:    serde::export::Some(
-            &new_manga.total_chapters.as_ref().unwrap_or(&null_msg),
+            new_manga
+                .total_chapters
+                .as_ref()
+                .unwrap_or(&null_msg)
+                .to_string(),
         ),
         volumes:           serde::export::Some(
-            &new_manga.volumes.as_ref().unwrap_or(&null_msg),
+            new_manga.volumes.as_ref().unwrap_or(&null_msg).to_string(),
         ),
         english_title:     &new_manga.manga_name.english,
         romaji_title:      &new_manga.manga_name.romaji,
@@ -315,7 +319,7 @@ pub fn insert_manga_v2(
 ) -> Result<HttpResponse, HttpResponse> {
     let pg_pool = pg_pool_handler(pool)?;
     let m: json_manga::Manga = new_manga.clone();
-    manga::NewManga::insert_manga(&m, &pg_pool)
+    manga::NewManga::insert_manga(m, &pg_pool)
         .map(|res| HttpResponse::Ok().json(res))
         .map_err(|e| HttpResponse::InternalServerError().json(e.to_string()))
 }

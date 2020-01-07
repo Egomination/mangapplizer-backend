@@ -94,12 +94,12 @@ pub struct NewManga<'a> {
     pub anilist_id:        i64,
     pub cover_image:       &'a str,
     pub banner_image:      &'a str,
-    pub start_date:        &'a str,
-    pub end_date:          &'a str,
+    pub start_date:        String,
+    pub end_date:          String,
     pub status:            &'a str,
     pub description:       &'a str,
-    pub total_chapters:    Option<&'a str>,
-    pub volumes:           Option<&'a str>,
+    pub total_chapters:    Option<String>,
+    pub volumes:           Option<String>,
     pub english_title:     &'a str,
     pub romaji_title:      &'a str,
     pub native_title:      &'a str,
@@ -164,37 +164,53 @@ impl<'a> NewManga<'a> {
     }
 
     pub fn insert_manga(
-        manga_data: &json_manga::Manga,
+        manga_data: json_manga::Manga,
         connection: &PgConnection,
     ) -> Result<Manga, diesel::result::Error> {
-        use diesel::RunQeryDsl;
+        use diesel::Connection;
+        use diesel::RunQueryDsl;
 
-        let m = Self {
-            anilist_id:        new_manga.anilist_id,
-            cover_image:       &new_manga.cover_image.large,
-            banner_image:      &new_manga.banner_image,
-            start_date:        &new_manga.start_date.to_string(),
-            end_date:          &new_manga.end_date.to_string(),
-            status:            &new_manga.status,
-            description:       &new_manga.description,
-            total_chapters:    serde::export::Some(
-                &new_manga.total_chapters.as_ref().unwrap_or("Null"),
-            ),
-            volumes:           serde::export::Some(
-                &new_manga.volumes.as_ref().unwrap_or("Null"),
-            ),
-            english_title:     &new_manga.manga_name.english,
-            romaji_title:      &new_manga.manga_name.romaji,
-            native_title:      &new_manga.manga_name.native,
-            cover_extra_large: &new_manga.cover_image.extra_large,
-            cover_large:       &new_manga.cover_image.large,
-            cover_medium:      &new_manga.cover_image.medium,
-            popularity:        new_manga.popularity,
-        };
+        connection.transaction(|| {
+            let m = Self {
+                anilist_id:        manga_data.anilist_id,
+                cover_image:       &manga_data.cover_image.large,
+                banner_image:      &manga_data.banner_image,
+                start_date:        manga_data.start_date.to_string(),
+                end_date:          manga_data.end_date.to_string().to_owned(),
+                status:            &manga_data.status,
+                description:       &manga_data.description,
+                total_chapters:    serde::export::Some(
+                    manga_data
+                        .total_chapters
+                        .as_ref()
+                        .unwrap_or(&"Null".to_string())
+                        .to_string(),
+                ),
+                volumes:           serde::export::Some(
+                    manga_data
+                        .volumes
+                        .as_ref()
+                        .unwrap_or(&"Null".to_string())
+                        .to_string(),
+                ),
+                english_title:     &manga_data.manga_name.english,
+                romaji_title:      &manga_data.manga_name.romaji,
+                native_title:      &manga_data.manga_name.native,
+                cover_extra_large: &manga_data.cover_image.extra_large,
+                cover_large:       &manga_data.cover_image.large,
+                cover_medium:      &manga_data.cover_image.medium,
+                popularity:        manga_data.popularity,
+            };
 
-        let manga = diesel::insert_into(mangas::table)
-            .values(&m)
-            .returning(MANGAS_COLUMNS)
-            .get_result::<Manga>(connection);
+            let manga = diesel::insert_into(mangas::table)
+                .values(&m)
+                .returning(MANGAS_COLUMNS)
+                .get_result::<Manga>(connection);
+
+            let staff_ids =
+                staff::NewStaff::insert_staff(&manga_data.staff, &connection);
+
+            manga
+        })
     }
 }
