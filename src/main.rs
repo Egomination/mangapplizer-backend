@@ -37,7 +37,7 @@ async fn main() -> std::io::Result<()> {
             .service(
                 web::resource("/mangas")
                     .route(web::get().to(handlers::mangas::index))
-                    .route(web::post().to(handlers::mangas::create)),
+                    .route(web::post().to(handlers::mangas::insert_manga_v2)),
             )
             .service(
                 web::resource("/mangas/{manga_id}")
