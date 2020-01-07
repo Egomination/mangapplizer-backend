@@ -1,4 +1,5 @@
 use crate::models::{
+    genre,
     json_manga,
     media,
     relation,
@@ -236,6 +237,9 @@ impl<'a> NewManga<'a> {
             if media.is_err() {
                 panic!("Cannot insert Media!");
             }
+
+            let genre_list =
+                genre::NewGenre::insert_genre(&manga_data.genres, &connection);
             Ok(manga)
         })
     }

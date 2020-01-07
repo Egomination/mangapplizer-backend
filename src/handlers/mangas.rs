@@ -170,7 +170,7 @@ fn create_genres(
 ) -> Result<uuid::Uuid, diesel::result::Error> {
     for genre in genres.to_owned() {
         let g = genre::NewGenre {
-            genre_name:  &genre,
+            genre_name:  genre,
             description: "",
         };
         let resp = g.create(&pg_pool);
