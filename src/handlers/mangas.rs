@@ -268,10 +268,10 @@ pub async fn insert_chapter(
         return Err(HttpResponse::InternalServerError().json("hata"));
     }
     // chapter_data.chapters.iter().for_each(|m| print_pages(m));
-    let mut ch_no = kissmanga_chapter::NewKmChapter::increment_ch(
+    let mut ch_no = kissmanga_chapter::NewKmChapter::latest(
         search_result.0[0].id,
         &pg_pool,
-    );
+    ) + 1;
     chapter_data.chapters.iter().for_each(|c| {
         // I am going to store Page pairs as Json in Postgres
         let chapter_json_data = serde_json::to_value(&c);
