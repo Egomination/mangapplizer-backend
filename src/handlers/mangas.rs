@@ -1,14 +1,7 @@
-use crate::db_connection::{
-    PgPool,
-    PgPooledConnection,
-};
+use crate::db_connection::{PgPool, PgPooledConnection};
 use crate::models::*;
-use actix_web::{
-    web,
-    HttpRequest,
-    HttpResponse,
-};
-use diesel::PgConnection;
+use actix_web::{web, HttpRequest, HttpResponse};
+
 use log;
 use std::collections::HashMap;
 
@@ -55,7 +48,7 @@ pub async fn index(
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Chapter {
     manga_name: String,
-    chapters:   Vec<Page>,
+    chapters: Vec<Page>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -90,27 +83,19 @@ pub async fn insert_chapter(
         // I am going to store Page pairs as Json in Postgres
         let chapter_json_data = serde_json::to_value(&c);
         let chapter = kissmanga_chapter::NewKmChapter {
-            manga_id:    search_result.0[0].id,
+            manga_id: search_result.0[0].id,
             source_name: &query.source_name,
             source_type: &query.source_type,
-            chapter_no:  ch_no,
-            pages:       chapter_json_data.unwrap(),
+            chapter_no: ch_no,
+            pages: chapter_json_data.unwrap(),
         };
 
         let result = chapter.create(&pg_pool);
         match result {
-            Err(e) => {
-                {
-                    log::error!("Cannot insert chapter!, {}", e.to_string())
-                }
-                ()
-            }
+            Err(e) => log::error!("Cannot insert chapter!, {}", e.to_string()),
             Ok(response) => {
-                {
-                    log::info!("Chapter {:#?} inserted", response);
-                    ch_no += 1;
-                }
-                ()
+                log::info!("Chapter {:#?} inserted", response);
+                ch_no += 1;
             }
         }
     });

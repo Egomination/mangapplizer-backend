@@ -184,7 +184,7 @@ impl<'a> NewManga<'a> {
                 cover_image:       &manga_data.cover_image.large,
                 banner_image:      &manga_data.banner_image,
                 start_date:        manga_data.start_date.to_string(),
-                end_date:          manga_data.end_date.to_string().to_owned(),
+                end_date:          manga_data.end_date.to_string(),
                 status:            &manga_data.status,
                 description:       &manga_data.description,
                 total_chapters:    serde::export::Some(
