@@ -11,6 +11,7 @@ use diesel::PgConnection;
     Serialize,
     Deserialize,
     AsChangeset,
+    PartialEq,
 )]
 #[table_name = "mangas"]
 pub struct Manga {
@@ -35,8 +36,55 @@ pub struct Manga {
     pub cover_medium:      String,
     pub popularity:        i64,
 }
+
+type MangaColumns = (
+    mangas::id,
+    mangas::created_at,
+    mangas::updated_at,
+    mangas::deleted_at,
+    mangas::anilist_id,
+    mangas::cover_image,
+    mangas::banner_image,
+    mangas::start_date,
+    mangas::end_date,
+    mangas::status,
+    mangas::description,
+    mangas::total_chapters,
+    mangas::volumes,
+    mangas::english_title,
+    mangas::romaji_title,
+    mangas::native_title,
+    mangas::cover_extra_large,
+    mangas::cover_large,
+    mangas::cover_medium,
+    mangas::popularity,
+);
+
+pub const MANGAS_COLUMNS: MangaColumns = (
+    mangas::id,
+    mangas::created_at,
+    mangas::updated_at,
+    mangas::deleted_at,
+    mangas::anilist_id,
+    mangas::cover_image,
+    mangas::banner_image,
+    mangas::start_date,
+    mangas::end_date,
+    mangas::status,
+    mangas::description,
+    mangas::total_chapters,
+    mangas::volumes,
+    mangas::english_title,
+    mangas::romaji_title,
+    mangas::native_title,
+    mangas::cover_extra_large,
+    mangas::cover_large,
+    mangas::cover_medium,
+    mangas::popularity,
+);
+
 // Used when new manga is going to be inserted into the database
-#[derive(Insertable, Debug, Deserialize, AsChangeset)]
+#[derive(Insertable, Debug, Deserialize, AsChangeset, PartialEq)]
 #[table_name = "mangas"]
 pub struct NewManga<'a> {
     pub anilist_id:        i64,
@@ -61,16 +109,40 @@ pub struct NewManga<'a> {
 pub struct MangaList(pub Vec<Manga>);
 
 impl MangaList {
-    pub fn list(connection: &PgConnection) -> Self {
+    pub fn list(
+        connection: &PgConnection,
+        search: &str,
+    ) -> Self {
+        use crate::schema;
         use crate::schema::mangas::dsl::*;
-        // use diesel::QueryDsl;
+        use diesel::pg::Pg;
+        use diesel::QueryDsl;
         use diesel::RunQueryDsl;
+        use diesel_full_text_search::{
+            plainto_tsquery,
+            TsVectorExtensions,
+        };
 
-        let result = mangas
+        let mut query = schema::mangas::table.into_boxed::<Pg>();
+
+        if !search.is_empty() {
+            query = query
+                .filter(text_searchable_mangas.matches(plainto_tsquery(search)))
+        }
+
+        let result = query
+            .select(MANGAS_COLUMNS)
             .load::<Manga>(connection)
-            .expect("Error loading mangas");
-
+            .expect("Error Searching Manga");
         MangaList(result)
+    }
+
+    pub fn len(&self) -> usize {
+        self.0.iter().len()
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.len() == 0
     }
 }
 
@@ -83,6 +155,7 @@ impl<'a> NewManga<'a> {
 
         diesel::insert_into(mangas::table)
             .values(self)
-            .get_result(connection)
+            .returning(MANGAS_COLUMNS)
+            .get_result::<Manga>(connection)
     }
 }

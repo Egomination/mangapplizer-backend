@@ -20,6 +20,7 @@ impl Response {
             genre::Genre,
             genre_lists::GenreList,
             manga::Manga,
+            manga::MANGAS_COLUMNS,
             media::Media,
             relation::Relation,
             series::Series,
@@ -37,6 +38,7 @@ impl Response {
 
         let uid = uuid::Uuid::parse_str(&mid).unwrap();
         let manga: Manga = mangas::table
+            .select(MANGAS_COLUMNS)
             .filter(mangas::id.eq(uid))
             .get_result(connection)?;
         let series: Result<Vec<Series>, diesel::result::Error> = series::table
@@ -81,10 +83,10 @@ impl Response {
             .collect::<Vec<Genre>>();
 
         Ok(Response {
-            manga:     manga,
-            staffs:    staff_vec,
+            manga,
+            staffs: staff_vec,
             relations: relation_vec,
-            genres:    genre_vec,
+            genres: genre_vec,
         })
     }
 }

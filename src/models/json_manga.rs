@@ -12,7 +12,7 @@
 // }
 
 extern crate serde_json;
-use std::collections::HashMap;
+// use std::collections::HashMap;
 
 #[derive(Serialize, Deserialize, Clone)]
 pub struct Manga {
@@ -35,11 +35,11 @@ pub struct Manga {
     pub banner_image: String,
     pub genres: Vec<String>,
     pub popularity: i64,
-    #[serde(rename = "mangaLinkArray")]
-    pub manga_link_array: Vec<HashMap<String, String>>,
-    pub staff: Vec<Staff>,
+    // #[serde(rename = "mangaLinkArray")]
+    // pub manga_link_array: Vec<HashMap<String, String>>,
+    pub staff:     Vec<Staff>,
     pub relations: Vec<Relation>,
-    pub tags: Vec<Tag>,
+    pub tags:      Vec<Tag>,
 }
 
 #[derive(Serialize, Deserialize, Clone)]

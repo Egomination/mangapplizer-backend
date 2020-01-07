@@ -9,6 +9,24 @@ use actix_web::{
     HttpResponse,
 };
 use diesel::PgConnection;
+use log;
+use std::collections::HashMap;
+
+/// Page is the chapter pages
+/// [
+///     {
+///         "0": "string",
+///         "1": "str",
+///     },
+///     {
+///         "0": "string",
+///     },
+/// ]
+type Page = HashMap<String, String>;
+
+// TODO:
+// Create struct that has genre: Genre, manga: Manga ... field. Pass them into
+// the Manga create function and move all of the logic inside the model.
 
 fn pg_pool_handler(
     pool: web::Data<PgPool>
@@ -17,21 +35,28 @@ fn pg_pool_handler(
         .map_err(|e| HttpResponse::InternalServerError().json(e.to_string()))
 }
 
+#[derive(Deserialize)]
+pub struct MangaSearch {
+    pub search: String,
+}
+
 // This is calling the list method on ProductList and
 // serializing it to a json response
-pub fn index(
+pub async fn index(
     _req: HttpRequest,
     pool: web::Data<PgPool>,
+    manga_search: web::Query<MangaSearch>,
 ) -> Result<HttpResponse, HttpResponse> {
     let pg_pool = pg_pool_handler(pool)?;
-    Ok(HttpResponse::Ok().json(manga::MangaList::list(&pg_pool)))
+    let search = &manga_search.search;
+    Ok(HttpResponse::Ok().json(manga::MangaList::list(&pg_pool, search)))
 }
 
 // NOTE: Check https://doc.rust-lang.org/rust-by-example/error/iter_result.html
 // for more idiomatic implementation for belove function
 fn create_staffs(
     manga_id: &uuid::Uuid,
-    staffs: &Vec<json_manga::Staff>,
+    staffs: &[json_manga::Staff],
     pg_pool: &PgConnection,
 ) -> Result<uuid::Uuid, diesel::result::Error> {
     for staff in staffs.to_owned() {
@@ -67,7 +92,7 @@ fn create_staffs(
 
 fn create_relations(
     manga_id: &uuid::Uuid,
-    relations: &Vec<json_manga::Relation>,
+    relations: &[json_manga::Relation],
     pg_pool: &PgConnection,
 ) -> Result<uuid::Uuid, diesel::result::Error> {
     for relation in relations.to_owned() {
@@ -103,7 +128,7 @@ fn create_relations(
 
 fn create_tags(
     manga_id: &uuid::Uuid,
-    tags: &Vec<json_manga::Tag>,
+    tags: &[json_manga::Tag],
     pg_pool: &PgConnection,
 ) -> Result<uuid::Uuid, diesel::result::Error> {
     for tag in tags.to_owned() {
@@ -140,7 +165,7 @@ fn create_tags(
 
 fn create_genres(
     manga_id: &uuid::Uuid,
-    genres: &Vec<String>,
+    genres: &[String],
     pg_pool: &PgConnection,
 ) -> Result<uuid::Uuid, diesel::result::Error> {
     for genre in genres.to_owned() {
@@ -173,7 +198,7 @@ fn create_genres(
     Ok(*manga_id)
 }
 
-pub fn create(
+pub async fn create(
     new_manga: web::Json<json_manga::Manga>,
     pool: web::Data<PgPool>,
 ) -> Result<HttpResponse, HttpResponse> {
@@ -213,7 +238,68 @@ pub fn create(
         .map_err(|e| HttpResponse::InternalServerError().json(e.to_string()))
 }
 
-pub fn find(
+#[derive(Serialize, Deserialize, Debug)]
+pub struct Chapter {
+    manga_name: String,
+    chapters:   Vec<Page>,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct QueryData {
+    source_name: String,
+    source_type: String,
+}
+
+pub async fn insert_chapter(
+    chapter_data: web::Json<Chapter>,
+    query: web::Query<QueryData>,
+    pool: web::Data<PgPool>,
+) -> Result<HttpResponse, HttpResponse> {
+    let pg_pool = pg_pool_handler(pool)?;
+    let search = &chapter_data.manga_name;
+    let search_result = manga::MangaList::list(&pg_pool, search);
+
+    // Early return if result is not singular
+    if search_result.len() > 1 || search_result.is_empty() {
+        return Err(HttpResponse::InternalServerError().json("hata"));
+    }
+    // chapter_data.chapters.iter().for_each(|m| print_pages(m));
+    let mut ch_no = kissmanga_chapter::NewKmChapter::increment_ch(
+        search_result.0[0].id,
+        &pg_pool,
+    );
+    chapter_data.chapters.iter().for_each(|c| {
+        // I am going to store Page pairs as Json in Postgres
+        let chapter_json_data = serde_json::to_value(&c);
+        let chapter = kissmanga_chapter::NewKmChapter {
+            manga_id:    search_result.0[0].id,
+            source_name: &query.source_name,
+            source_type: &query.source_type,
+            chapter_no:  ch_no,
+            pages:       chapter_json_data.unwrap(),
+        };
+
+        let result = chapter.create(&pg_pool);
+        match result {
+            Err(e) => {
+                {
+                    log::error!("Cannot insert chapter!, {}", e.to_string())
+                }
+                ()
+            }
+            Ok(response) => {
+                {
+                    log::info!("Chapter {:#?} inserted", response);
+                    ch_no += 1;
+                }
+                ()
+            }
+        }
+    });
+    Ok(HttpResponse::Ok().json("Chapters inserted!"))
+}
+
+pub async fn find(
     manga_id: web::Path<String>,
     pool: web::Data<PgPool>,
 ) -> Result<HttpResponse, HttpResponse> {
