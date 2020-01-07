@@ -98,11 +98,11 @@ fn create_relations(
     for relation in relations.to_owned() {
         let r: relation::NewRelation = relation::NewRelation {
             anilist_id:        relation.anilist_id,
-            relationship_type: &relation.relation_type,
-            media_type:        &relation.media_type,
-            status:            &relation.status,
-            title:             &relation.name,
-            banner_image:      serde::export::Some::<&str>(&relation.image),
+            relationship_type: relation.relation_type,
+            media_type:        relation.media_type,
+            status:            relation.status,
+            title:             relation.name,
+            banner_image:      serde::export::Some::<String>(relation.image),
         };
         let resp = r.create(&pg_pool);
         match resp {

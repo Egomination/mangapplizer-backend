@@ -1,5 +1,6 @@
 use crate::models::{
     json_manga,
+    relation,
     series,
     staff,
 };
@@ -219,6 +220,11 @@ impl<'a> NewManga<'a> {
             if series.is_err() {
                 panic!("Cannot insert series!");
             }
+
+            let relation_ids = relation::NewRelation::insert_relation(
+                &manga_data.relations,
+                &connection,
+            );
             Ok(manga)
         })
     }
