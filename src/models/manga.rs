@@ -7,6 +7,7 @@ use crate::models::{
     series,
     staff,
     tag,
+    tag_lists,
 };
 use crate::schema::mangas;
 use diesel::PgConnection;
@@ -148,6 +149,7 @@ impl MangaList {
     }
 
     pub fn len(&self) -> usize {
+        println!("{}", self.0.iter().len());
         self.0.iter().len()
     }
 
@@ -250,11 +252,22 @@ impl<'a> NewManga<'a> {
             );
 
             if genre_list.is_err() {
-                panic!("Cannot insert Genre!");
+                panic!("Cannot insert Genre List!");
             }
 
             let tag_ids =
                 tag::NewTag::insert_tag(&manga_data.tags, &connection);
+
+            let tag_list = tag_lists::NewTagList::insert_tag_list(
+                &manga.id,
+                tag_ids,
+                &connection,
+            );
+
+            if tag_list.is_err() {
+                panic!("Cannot insert Tag list!!");
+            }
+
             Ok(manga)
         })
     }
