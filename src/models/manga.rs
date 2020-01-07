@@ -1,5 +1,6 @@
 use crate::models::{
     json_manga,
+    series,
     staff,
 };
 use crate::schema::mangas;
@@ -205,12 +206,20 @@ impl<'a> NewManga<'a> {
             let manga = diesel::insert_into(mangas::table)
                 .values(&m)
                 .returning(MANGAS_COLUMNS)
-                .get_result::<Manga>(connection);
+                .get_result::<Manga>(connection)?;
 
             let staff_ids =
                 staff::NewStaff::insert_staff(&manga_data.staff, &connection);
 
-            manga
+            let series = series::NewSeries::insert_series(
+                &manga.id,
+                staff_ids,
+                &connection,
+            );
+            if series.is_err() {
+                panic!("Cannot insert series!");
+            }
+            Ok(manga)
         })
     }
 }
