@@ -133,10 +133,10 @@ fn create_tags(
 ) -> Result<uuid::Uuid, diesel::result::Error> {
     for tag in tags.to_owned() {
         let t = tag::NewTag {
-            tag_name:    &tag.name,
-            category:    &tag.category,
+            tag_name:    tag.name,
+            category:    tag.category,
             is_spoiler:  tag.is_spoiler,
-            description: &tag.description,
+            description: tag.description,
         };
         let resp = t.create(&pg_pool);
         match resp {

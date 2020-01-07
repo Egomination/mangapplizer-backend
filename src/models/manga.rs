@@ -6,6 +6,7 @@ use crate::models::{
     relation,
     series,
     staff,
+    tag,
 };
 use crate::schema::mangas;
 use diesel::PgConnection;
@@ -251,6 +252,9 @@ impl<'a> NewManga<'a> {
             if genre_list.is_err() {
                 panic!("Cannot insert Genre!");
             }
+
+            let tag_ids =
+                tag::NewTag::insert_tag(&manga_data.tags, &connection);
             Ok(manga)
         })
     }
