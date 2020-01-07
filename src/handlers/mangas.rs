@@ -308,3 +308,14 @@ pub async fn find(
         .map(|res| HttpResponse::Ok().json(res))
         .map_err(|e| HttpResponse::InternalServerError().json(e.to_string()))
 }
+
+pub fn insert_manga_v2(
+    new_manga: web::Json<json_manga::Manga>,
+    pool: web::Data<PgPool>,
+) -> Result<HttpResponse, HttpResponse> {
+    let pg_pool = pg_pool_handler(pool)?;
+    let m: json_manga::Manga = new_manga.clone();
+    manga::NewManga::insert_manga(&m, &pg_pool)
+        .map(|res| HttpResponse::Ok().json(res))
+        .map_err(|e| HttpResponse::InternalServerError().json(e.to_string()))
+}

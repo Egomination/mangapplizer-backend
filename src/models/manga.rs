@@ -1,3 +1,7 @@
+use crate::models::{
+    json_manga,
+    staff,
+};
 use crate::schema::mangas;
 use diesel::PgConnection;
 
@@ -157,5 +161,40 @@ impl<'a> NewManga<'a> {
             .values(self)
             .returning(MANGAS_COLUMNS)
             .get_result::<Manga>(connection)
+    }
+
+    pub fn insert_manga(
+        manga_data: &json_manga::Manga,
+        connection: &PgConnection,
+    ) -> Result<Manga, diesel::result::Error> {
+        use diesel::RunQeryDsl;
+
+        let m = Self {
+            anilist_id:        new_manga.anilist_id,
+            cover_image:       &new_manga.cover_image.large,
+            banner_image:      &new_manga.banner_image,
+            start_date:        &new_manga.start_date.to_string(),
+            end_date:          &new_manga.end_date.to_string(),
+            status:            &new_manga.status,
+            description:       &new_manga.description,
+            total_chapters:    serde::export::Some(
+                &new_manga.total_chapters.as_ref().unwrap_or("Null"),
+            ),
+            volumes:           serde::export::Some(
+                &new_manga.volumes.as_ref().unwrap_or("Null"),
+            ),
+            english_title:     &new_manga.manga_name.english,
+            romaji_title:      &new_manga.manga_name.romaji,
+            native_title:      &new_manga.manga_name.native,
+            cover_extra_large: &new_manga.cover_image.extra_large,
+            cover_large:       &new_manga.cover_image.large,
+            cover_medium:      &new_manga.cover_image.medium,
+            popularity:        new_manga.popularity,
+        };
+
+        let manga = diesel::insert_into(mangas::table)
+            .values(&m)
+            .returning(MANGAS_COLUMNS)
+            .get_result::<Manga>(connection);
     }
 }

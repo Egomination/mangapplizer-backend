@@ -1,3 +1,4 @@
+use crate::models::json_manga;
 use crate::schema::staffs;
 use diesel::PgConnection;
 
@@ -51,5 +52,26 @@ impl NewStaff {
             .do_update()
             .set(staffs::updated_at.eq(std::time::SystemTime::now()))
             .get_result(connection)
+    }
+
+    pub fn insert_staff(
+        staffs_data: &[json_manga::Staff],
+        connection: &PgConnection,
+    ) -> Response<uuid::Uuid, diesel::result::Error> {
+        for staff in staffs_data {
+            let s = Self {
+                anilist_id:  staff.anilist_id,
+                staff_role:  staff.position,
+                staff_name:  staff.name,
+                image:       staff.picture.large,
+                description: staff.description,
+            };
+            diesel::insert_into(staffs::table)
+                .values(self)
+                .on_conflict(staff_name)
+                .do_update()
+                .set(staffs::updated_at.eq(std::time::SystemTime::now()))
+                .get_result(connection)
+        }
     }
 }
