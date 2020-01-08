@@ -1,3 +1,74 @@
+<a name="0.5.0"></a>
+## 0.5.0 (2020-01-08)
+
+
+#### Refactor
+
+*   remove remaining redundant code ([eaa0e558](https://github.com/Egomination/mangapplizer-backend/commit/eaa0e5585b02f573482b5d6d76dfeae90252f66d))
+*   move pg_pool_connection into mod.rs ([a70d140f](https://github.com/Egomination/mangapplizer-backend/commit/a70d140f936139e2cac21b38220105a9d42da978))
+*   remove redundant stuff ([90097a28](https://github.com/Egomination/mangapplizer-backend/commit/90097a28d90cf05778a74a7ce089a6b75a1cecb7))
+*   remove old manga insertion logic ([b22bea4f](https://github.com/Egomination/mangapplizer-backend/commit/b22bea4f0e96b7439359cae467411b92915c3f20))
+*   latest function of kiss manga struct ([51aead50](https://github.com/Egomination/mangapplizer-backend/commit/51aead507b11393fd7bcb78e799f7e29d7be24c3))
+*   add insert staff v2 ([3a9c60b5](https://github.com/Egomination/mangapplizer-backend/commit/3a9c60b5ca48fd626befc305a632f6d70c6be899))
+*   remove redundant key from response struct ([dbbf1ac7](https://github.com/Egomination/mangapplizer-backend/commit/dbbf1ac766fd2d7c41d8d54e0428bf270090d7d1))
+*   change params vec to slice ([cd6c0ffa](https://github.com/Egomination/mangapplizer-backend/commit/cd6c0ffafbf328628e9a98fb4debdc38adbf8d43))
+
+#### Documents
+
+* **changelog:**  update changelog ([9002c28d](https://github.com/Egomination/mangapplizer-backend/commit/9002c28dd7c049e9e760899756da3f8169a33ca2))
+* **readme:**  add readme file ([34f23bad](https://github.com/Egomination/mangapplizer-backend/commit/34f23badcd6c407abb85b12ccefe9652ea4a31bc))
+
+#### Bug Fixes
+
+*   merge conflicts ([a52aadb8](https://github.com/Egomination/mangapplizer-backend/commit/a52aadb85aea853d06219da3d433bd7ee56692c1))
+*   remove mangalinkarray field from parsing struct ([08cc5df2](https://github.com/Egomination/mangapplizer-backend/commit/08cc5df2963cae13b96a93842059f1c56ed078a0))
+*   example input ([87c7a99a](https://github.com/Egomination/mangapplizer-backend/commit/87c7a99a1e18d7fff08f38b31aad0c4c63f58485))
+*   make optional to remove existing db folder ([ee4294aa](https://github.com/Egomination/mangapplizer-backend/commit/ee4294aaa56f788ee54f59583dddd30c09fc6e8b))
+*   remove unused variables ([990701dc](https://github.com/Egomination/mangapplizer-backend/commit/990701dc7001abaf18932939b4697b4bf66e88b7))
+*   change postgres base image ([9a7aeca0](https://github.com/Egomination/mangapplizer-backend/commit/9a7aeca00b1fedd8e3fe0f104db32f1b65ac2607))
+*   remove rum after it does its job ([d7210f1a](https://github.com/Egomination/mangapplizer-backend/commit/d7210f1a825e8b45ef6079ca7336c61bb478ec22))
+*   typo ([90a55fba](https://github.com/Egomination/mangapplizer-backend/commit/90a55fba336b84b464fec9587fb862339f2bf7a2))
+
+#### Build
+
+*   add release and dev profiles ([38f0c886](https://github.com/Egomination/mangapplizer-backend/commit/38f0c886b2d3b570ea988b1e7b9098aeff736d30))
+
+#### Features
+
+*   add custom errors ([f9819451](https://github.com/Egomination/mangapplizer-backend/commit/f98194512681c729be4a3e17666fdd795c687035))
+*   add insert_chapter function in KmChapter ([0f7ff15c](https://github.com/Egomination/mangapplizer-backend/commit/0f7ff15c9ea81b6dc7e25b5a0af21c80530bf1bf))
+*   implement tag list insertion ([7ee43545](https://github.com/Egomination/mangapplizer-backend/commit/7ee4354586721eb037ab8c9bf1d60793252bb47d))
+*   add tag insertion ([db914b3d](https://github.com/Egomination/mangapplizer-backend/commit/db914b3d88a3b363bce1af105fcd37319b5f714a))
+*   add genre_list insertion ([80256029](https://github.com/Egomination/mangapplizer-backend/commit/80256029698bdccfac6cd8edcd583be6b0c45be3))
+*   add genre insert ([d3708a3b](https://github.com/Egomination/mangapplizer-backend/commit/d3708a3b283ce43a77ca38d897d88dfaee4ab632))
+*   add media insert ([dd25bf99](https://github.com/Egomination/mangapplizer-backend/commit/dd25bf99acec757d64c0523d5384f0b25586b034))
+*   add relation insert ([3b228a5c](https://github.com/Egomination/mangapplizer-backend/commit/3b228a5cf94e195e24d4d51a4c9e177906701fba))
+*   add series insert ([12dc0847](https://github.com/Egomination/mangapplizer-backend/commit/12dc0847a44e9a9056b9315f5fb419d7ed107ef5))
+*   update actix web ([a4aa9e3b](https://github.com/Egomination/mangapplizer-backend/commit/a4aa9e3b3efe92cf10894564cba03288eb088e87))
+*   update actix web ([d38197c4](https://github.com/Egomination/mangapplizer-backend/commit/d38197c4b0dd3f083f104e40bebaee888b660ddc))
+*   add chapter insertion ([0d2a5b33](https://github.com/Egomination/mangapplizer-backend/commit/0d2a5b3337307c30bc6cbdfed2b55824abcb3746))
+*   add log crate ([1e347428](https://github.com/Egomination/mangapplizer-backend/commit/1e3474286b3a0319a5b806b847ee631f2f686743))
+*   add latest chapter number of the manga ([91913e2d](https://github.com/Egomination/mangapplizer-backend/commit/91913e2d0541bfcddb8c47191b03aeb70c0a9d2e))
+*   add auto incerement chapter function ([922dab26](https://github.com/Egomination/mangapplizer-backend/commit/922dab26613b20a1c95a7643f564ced928c31a89))
+*   test chapter insertion logic ([1ecceaa0](https://github.com/Egomination/mangapplizer-backend/commit/1ecceaa0a6e95c2597ab38191277d9650d082536))
+*   enable diesel serde feature ([8715454c](https://github.com/Egomination/mangapplizer-backend/commit/8715454c9b5f01f3b930833c051df1288cd3468d))
+*   add chapters table's rust binding ([efc0e5e2](https://github.com/Egomination/mangapplizer-backend/commit/efc0e5e231272e99ba137c86bd4da6e21b7ce7fa))
+*   add kissmanga_chapters table ([2ce796ea](https://github.com/Egomination/mangapplizer-backend/commit/2ce796ea0772a5dd84abb63acefd8009c332f33c))
+*   add print k/v function for chapter pages ([9ad40b4a](https://github.com/Egomination/mangapplizer-backend/commit/9ad40b4a75c6406a0f412bf8eae7fb49497a746c))
+*   implement is_empty for MangaList struct ([9b5a5f11](https://github.com/Egomination/mangapplizer-backend/commit/9b5a5f11632bc499934e506f157deaa6a5712a0c))
+*   add chapter parser ([996aa203](https://github.com/Egomination/mangapplizer-backend/commit/996aa2034f19d7a4cd0fcdc98d5acb6a143b5b4d))
+*   start implementing chapter insertion function ([ad30d58c](https://github.com/Egomination/mangapplizer-backend/commit/ad30d58c72831f404daa2dd417b27b8ca0d0345b))
+*   add insert manga end-point ([e2afda19](https://github.com/Egomination/mangapplizer-backend/commit/e2afda19182f9668ddf8353992342bb17dffaa00))
+*   add len function for mangalist struct ([91a4c0ff](https://github.com/Egomination/mangapplizer-backend/commit/91a4c0ffe3823ae907cbc4c561ef4568fd6e225d))
+*   add FTS search implementation ([57bac557](https://github.com/Egomination/mangapplizer-backend/commit/57bac55730ae3e4191fe1bbdad6968954d9cc8c2))
+*   add returning columns of the mangas table ([2bba7b7a](https://github.com/Egomination/mangapplizer-backend/commit/2bba7b7ab5ed3e7b243e4940173c4cd891aa3d3a))
+*   disable MangaList struct ([39ff8dae](https://github.com/Egomination/mangapplizer-backend/commit/39ff8daeecea65f3db004c1f7620539d6f901b63))
+*   add tsvector ([79f65d54](https://github.com/Egomination/mangapplizer-backend/commit/79f65d548e2513f13d1ecfc05f71f1c4cde80b7a))
+*   add docker image for postgres with RUM ([14f06fef](https://github.com/Egomination/mangapplizer-backend/commit/14f06feffc87b6b154855e21b1d641bcc1b7e840))
+*   add required files to init RUM FTS plugin ([d68bb9dd](https://github.com/Egomination/mangapplizer-backend/commit/d68bb9dd4ff52df7856b1715f7678304e9a3665d))
+
+
+
 <a name="0.4.0"></a>
 ## 0.4.0 (2019-12-23)
 
