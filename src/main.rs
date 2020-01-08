@@ -2,6 +2,7 @@ extern crate actix_web;
 extern crate mangapplizer_backend;
 
 pub mod db_connection;
+pub mod errors;
 pub mod handlers;
 pub mod models;
 pub mod schema;

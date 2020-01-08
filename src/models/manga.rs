@@ -1,3 +1,4 @@
+use crate::errors::MangapplizerError;
 use crate::models::{
     genre,
     genre_lists,
@@ -161,19 +162,20 @@ impl<'a> NewManga<'a> {
     pub fn create(
         &self,
         connection: &PgConnection,
-    ) -> Result<Manga, diesel::result::Error> {
+    ) -> Result<Manga, MangapplizerError> {
         use diesel::RunQueryDsl;
 
         diesel::insert_into(mangas::table)
             .values(self)
             .returning(MANGAS_COLUMNS)
             .get_result::<Manga>(connection)
+            .map_err(MangapplizerError::DbError)
     }
 
     pub fn insert_manga(
         manga_data: json_manga::Manga,
         connection: &PgConnection,
-    ) -> Result<Manga, diesel::result::Error> {
+    ) -> Result<Manga, MangapplizerError> {
         use diesel::Connection;
         use diesel::RunQueryDsl;
 
@@ -212,7 +214,8 @@ impl<'a> NewManga<'a> {
             let manga = diesel::insert_into(mangas::table)
                 .values(&m)
                 .returning(MANGAS_COLUMNS)
-                .get_result::<Manga>(connection)?;
+                .get_result::<Manga>(connection)
+                .map_err(MangapplizerError::DbError)?;
 
             let staff_ids =
                 staff::NewStaff::insert_staff(&manga_data.staff, &connection);
@@ -223,7 +226,9 @@ impl<'a> NewManga<'a> {
                 &connection,
             );
             if series.is_err() {
-                panic!("Cannot insert Series!");
+                return Err(MangapplizerError::RelationInsertionError(
+                    String::from("series"),
+                ));
             }
 
             let relation_ids = relation::NewRelation::insert_relation(
@@ -238,7 +243,9 @@ impl<'a> NewManga<'a> {
             );
 
             if media.is_err() {
-                panic!("Cannot insert Media!");
+                return Err(MangapplizerError::RelationInsertionError(
+                    String::from("media"),
+                ));
             }
 
             let genre_list =
@@ -251,7 +258,9 @@ impl<'a> NewManga<'a> {
             );
 
             if genre_list.is_err() {
-                panic!("Cannot insert Genre List!");
+                return Err(MangapplizerError::RelationInsertionError(
+                    String::from("genre_list"),
+                ));
             }
 
             let tag_ids =
@@ -264,7 +273,9 @@ impl<'a> NewManga<'a> {
             );
 
             if tag_list.is_err() {
-                panic!("Cannot insert Tag list!!");
+                return Err(MangapplizerError::RelationInsertionError(
+                    String::from("tag_list"),
+                ));
             }
 
             Ok(manga)

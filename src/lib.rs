@@ -17,11 +17,11 @@ extern crate actix_web;
 
 // #[macro_use]
 // extern crate log;
-extern crate actix_http;
 extern crate env_logger;
+// extern crate actix_http;
 
 pub mod db_connection;
-// pub mod errors;
+pub mod errors;
 pub mod handlers;
 pub mod models;
 pub mod schema;

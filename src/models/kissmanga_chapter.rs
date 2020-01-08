@@ -1,3 +1,4 @@
+use crate::errors;
 use crate::models::manga;
 use crate::schema::kissmanga_chapters;
 use diesel::PgConnection;
