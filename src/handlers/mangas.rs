@@ -27,7 +27,6 @@ type Page = HashMap<String, String>;
 // TODO:
 // Create struct that has genre: Genre, manga: Manga ... field. Pass them into
 // the Manga create function and move all of the logic inside the model.
-
 fn pg_pool_handler(
     pool: web::Data<PgPool>
 ) -> Result<PgPooledConnection, HttpResponse> {
