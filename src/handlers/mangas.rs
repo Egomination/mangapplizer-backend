@@ -1,6 +1,13 @@
-use crate::db_connection::{PgPool, PgPooledConnection};
+use crate::db_connection::{
+    PgPool,
+    PgPooledConnection,
+};
 use crate::models::*;
-use actix_web::{web, HttpRequest, HttpResponse};
+use actix_web::{
+    web,
+    HttpRequest,
+    HttpResponse,
+};
 
 use log;
 use std::collections::HashMap;
@@ -20,7 +27,6 @@ type Page = HashMap<String, String>;
 // TODO:
 // Create struct that has genre: Genre, manga: Manga ... field. Pass them into
 // the Manga create function and move all of the logic inside the model.
-
 fn pg_pool_handler(
     pool: web::Data<PgPool>
 ) -> Result<PgPooledConnection, HttpResponse> {
@@ -48,7 +54,7 @@ pub async fn index(
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Chapter {
     manga_name: String,
-    chapters: Vec<Page>,
+    chapters:   Vec<Page>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -83,11 +89,11 @@ pub async fn insert_chapter(
         // I am going to store Page pairs as Json in Postgres
         let chapter_json_data = serde_json::to_value(&c);
         let chapter = kissmanga_chapter::NewKmChapter {
-            manga_id: search_result.0[0].id,
+            manga_id:    search_result.0[0].id,
             source_name: &query.source_name,
             source_type: &query.source_type,
-            chapter_no: ch_no,
-            pages: chapter_json_data.unwrap(),
+            chapter_no:  ch_no,
+            pages:       chapter_json_data.unwrap(),
         };
 
         let result = chapter.create(&pg_pool);
