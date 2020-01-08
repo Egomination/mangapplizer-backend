@@ -1,5 +1,21 @@
+use crate::models::manga;
 use crate::schema::kissmanga_chapters;
 use diesel::PgConnection;
+use std::collections::HashMap;
+
+type Page = HashMap<String, String>;
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct Chapter {
+    pub manga_name: String,
+    pub chapters:   Vec<Page>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct QueryData {
+    pub source_name: String,
+    pub source_type: String,
+}
 
 #[derive(
     Queryable,
@@ -65,6 +81,56 @@ impl<'a> NewKmChapter<'a> {
     //     // });
     //     // ch_no
     // }
+    pub fn insert_chapter(
+        json_data: &Chapter,
+        query_data: &QueryData,
+        connection: &PgConnection,
+    ) -> Result<&'a str, errors::MangapplizerError> {
+        use diesel::RunQueryDsl;
+
+        let search = &json_data.manga_name;
+        let search_result = manga::MangaList::list(&connection, search);
+
+        // Early return if result is not singular
+        if search_result.len() > 1 {
+            return Err(errors::MangapplizerError::TooManyMangas());
+        } else if search_result.is_empty() {
+            return Err(errors::MangapplizerError::EmptySearch());
+        }
+        // chapter_data.chapters.iter().for_each(|m| print_pages(m));
+        let mut ch_no = Self::latest(search_result.0[0].id, connection);
+        ch_no += 1;
+
+        let sname = query_data.source_name.to_owned();
+        let stype = query_data.source_type.to_owned();
+        json_data.chapters.iter().for_each(|c| {
+            // I am going to store Page pairs as Json in Postgres
+            let chapter_json_data = serde_json::to_value(&c);
+            let chapter = Self {
+                manga_id:    search_result.0[0].id,
+                source_name: &sname,
+                source_type: &stype,
+                chapter_no:  ch_no,
+                pages:       chapter_json_data.unwrap(),
+            };
+
+            let result = diesel::insert_into(kissmanga_chapters::table)
+                .values(&chapter)
+                .get_result::<KmChapter>(connection)
+                .map_err(errors::MangapplizerError::DbError);
+
+            match result {
+                Err(e) => {
+                    log::error!("Cannot insert chapter!, {}", e.to_string())
+                }
+                Ok(response) => {
+                    log::info!("Chapter {:#?} inserted", response);
+                    ch_no += 1;
+                }
+            }
+        });
+        Ok("Chapters inserted!")
+    }
 
     pub fn latest(
         manga_id: uuid::Uuid,
