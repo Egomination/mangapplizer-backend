@@ -149,7 +149,6 @@ impl MangaList {
     }
 
     pub fn len(&self) -> usize {
-        println!("{}", self.0.iter().len());
         self.0.iter().len()
     }
 
