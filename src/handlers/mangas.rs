@@ -1,8 +1,6 @@
-use crate::db_connection::{
-    PgPool,
-    PgPooledConnection,
-};
+use crate::db_connection::PgPool;
 use crate::models::*;
+// use actix::prelude::Future;
 use actix_web::{
     web,
     HttpRequest,
@@ -11,6 +9,8 @@ use actix_web::{
 
 use log;
 use std::collections::HashMap;
+
+use crate::handlers::pg_pool_handler;
 
 /// Page is the chapter pages
 /// [
@@ -27,12 +27,6 @@ type Page = HashMap<String, String>;
 // TODO:
 // Create struct that has genre: Genre, manga: Manga ... field. Pass them into
 // the Manga create function and move all of the logic inside the model.
-fn pg_pool_handler(
-    pool: web::Data<PgPool>
-) -> Result<PgPooledConnection, HttpResponse> {
-    pool.get()
-        .map_err(|e| HttpResponse::InternalServerError().json(e.to_string()))
-}
 
 #[derive(Deserialize)]
 pub struct MangaSearch {

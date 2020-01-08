@@ -51,7 +51,4 @@ async fn main() -> std::io::Result<()> {
     .bind("0.0.0.0:9092")?
     .run()
     .await
-
-    // println!("Started!");
-    // let _ = sys.run();
 }
