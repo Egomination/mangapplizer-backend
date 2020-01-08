@@ -33,4 +33,24 @@ impl NewMedia {
             .values(self)
             .get_result(connection)
     }
+
+    pub fn insert_media(
+        manga_id: &uuid::Uuid,
+        relation_ids: Vec<uuid::Uuid>,
+        connection: &PgConnection,
+    ) -> Result<(), diesel::result::Error> {
+        use diesel::RunQueryDsl;
+
+        for rid in relation_ids {
+            let r = Self {
+                manga_id:    *manga_id,
+                relation_id: rid,
+            };
+            diesel::insert_into(media::table)
+                .values(&r)
+                .get_result::<Media>(connection)
+                .unwrap();
+        }
+        Ok(())
+    }
 }

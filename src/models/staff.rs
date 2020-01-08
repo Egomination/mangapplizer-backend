@@ -1,3 +1,4 @@
+use crate::models::json_manga;
 use crate::schema::staffs;
 use diesel::PgConnection;
 
@@ -51,5 +52,35 @@ impl NewStaff {
             .do_update()
             .set(staffs::updated_at.eq(std::time::SystemTime::now()))
             .get_result(connection)
+    }
+
+    pub fn insert_staff(
+        staffs_data: &[json_manga::Staff],
+        connection: &PgConnection,
+    ) -> Vec<uuid::Uuid> {
+        use crate::schema::staffs::columns::staff_name;
+        use diesel::ExpressionMethods;
+        use diesel::RunQueryDsl;
+
+        let mut staff_ids = vec![];
+        for staff in staffs_data.to_owned() {
+            let s = Self {
+                anilist_id:  staff.anilist_id,
+                staff_role:  staff.position,
+                staff_name:  staff.name,
+                image:       staff.picture.large,
+                description: staff.description,
+            };
+            let inserted_staff = diesel::insert_into(staffs::table)
+                .values(&s)
+                .on_conflict(staff_name)
+                .do_update()
+                .set(staffs::updated_at.eq(std::time::SystemTime::now()))
+                .returning(staffs::id)
+                .get_result(connection)
+                .unwrap();
+            staff_ids.push(inserted_staff);
+        }
+        staff_ids
     }
 }

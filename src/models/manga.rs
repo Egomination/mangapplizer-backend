@@ -1,3 +1,14 @@
+use crate::models::{
+    genre,
+    genre_lists,
+    json_manga,
+    media,
+    relation,
+    series,
+    staff,
+    tag,
+    tag_lists,
+};
 use crate::schema::mangas;
 use diesel::PgConnection;
 
@@ -90,12 +101,12 @@ pub struct NewManga<'a> {
     pub anilist_id:        i64,
     pub cover_image:       &'a str,
     pub banner_image:      &'a str,
-    pub start_date:        &'a str,
-    pub end_date:          &'a str,
+    pub start_date:        String,
+    pub end_date:          String,
     pub status:            &'a str,
     pub description:       &'a str,
-    pub total_chapters:    Option<&'a str>,
-    pub volumes:           Option<&'a str>,
+    pub total_chapters:    Option<String>,
+    pub volumes:           Option<String>,
     pub english_title:     &'a str,
     pub romaji_title:      &'a str,
     pub native_title:      &'a str,
@@ -138,6 +149,7 @@ impl MangaList {
     }
 
     pub fn len(&self) -> usize {
+        println!("{}", self.0.iter().len());
         self.0.iter().len()
     }
 
@@ -157,5 +169,106 @@ impl<'a> NewManga<'a> {
             .values(self)
             .returning(MANGAS_COLUMNS)
             .get_result::<Manga>(connection)
+    }
+
+    pub fn insert_manga(
+        manga_data: json_manga::Manga,
+        connection: &PgConnection,
+    ) -> Result<Manga, diesel::result::Error> {
+        use diesel::Connection;
+        use diesel::RunQueryDsl;
+
+        connection.transaction(|| {
+            let m = Self {
+                anilist_id:        manga_data.anilist_id,
+                cover_image:       &manga_data.cover_image.large,
+                banner_image:      &manga_data.banner_image,
+                start_date:        manga_data.start_date.to_string(),
+                end_date:          manga_data.end_date.to_string(),
+                status:            &manga_data.status,
+                description:       &manga_data.description,
+                total_chapters:    serde::export::Some(
+                    manga_data
+                        .total_chapters
+                        .as_ref()
+                        .unwrap_or(&"Null".to_string())
+                        .to_string(),
+                ),
+                volumes:           serde::export::Some(
+                    manga_data
+                        .volumes
+                        .as_ref()
+                        .unwrap_or(&"Null".to_string())
+                        .to_string(),
+                ),
+                english_title:     &manga_data.manga_name.english,
+                romaji_title:      &manga_data.manga_name.romaji,
+                native_title:      &manga_data.manga_name.native,
+                cover_extra_large: &manga_data.cover_image.extra_large,
+                cover_large:       &manga_data.cover_image.large,
+                cover_medium:      &manga_data.cover_image.medium,
+                popularity:        manga_data.popularity,
+            };
+
+            let manga = diesel::insert_into(mangas::table)
+                .values(&m)
+                .returning(MANGAS_COLUMNS)
+                .get_result::<Manga>(connection)?;
+
+            let staff_ids =
+                staff::NewStaff::insert_staff(&manga_data.staff, &connection);
+
+            let series = series::NewSeries::insert_series(
+                &manga.id,
+                staff_ids,
+                &connection,
+            );
+            if series.is_err() {
+                panic!("Cannot insert Series!");
+            }
+
+            let relation_ids = relation::NewRelation::insert_relation(
+                &manga_data.relations,
+                &connection,
+            );
+
+            let media = media::NewMedia::insert_media(
+                &manga.id,
+                relation_ids,
+                &connection,
+            );
+
+            if media.is_err() {
+                panic!("Cannot insert Media!");
+            }
+
+            let genre_list =
+                genre::NewGenre::insert_genre(&manga_data.genres, &connection);
+
+            let genre_list = genre_lists::NewGenreList::insert_genre_list(
+                &manga.id,
+                genre_list,
+                &connection,
+            );
+
+            if genre_list.is_err() {
+                panic!("Cannot insert Genre List!");
+            }
+
+            let tag_ids =
+                tag::NewTag::insert_tag(&manga_data.tags, &connection);
+
+            let tag_list = tag_lists::NewTagList::insert_tag_list(
+                &manga.id,
+                tag_ids,
+                &connection,
+            );
+
+            if tag_list.is_err() {
+                panic!("Cannot insert Tag list!!");
+            }
+
+            Ok(manga)
+        })
     }
 }

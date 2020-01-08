@@ -42,28 +42,29 @@ impl<'a> NewKmChapter<'a> {
             .get_result::<KmChapter>(connection)
     }
 
-    pub fn increment_ch(
-        manga_id: uuid::Uuid,
-        connection: &PgConnection,
-    ) -> i32 {
-        use crate::diesel::ExpressionMethods;
-        use crate::diesel::QueryDsl;
-        use crate::diesel::RunQueryDsl;
-        let manga: Vec<KmChapter> = kissmanga_chapters::table
-            .filter(kissmanga_chapters::manga_id.eq(&manga_id))
-            .get_results(connection)
-            .unwrap();
+    // pub fn increment_ch(
+    //     manga_id: uuid::Uuid,
+    //     connection: &PgConnection,
+    // ) -> usize {
+    //     use crate::diesel::ExpressionMethods;
+    //     use crate::diesel::QueryDsl;
+    //     use crate::diesel::RunQueryDsl;
+    //     let manga: Vec<KmChapter> = kissmanga_chapters::table
+    //         .filter(kissmanga_chapters::manga_id.eq(&manga_id))
+    //         .get_results(connection)
+    //         .unwrap();
 
-        let mut ch_no = 1;
-        manga.iter().for_each(|ch| {
-            if ch.chapter_no > ch_no {
-                ch_no = ch.chapter_no
-            } else if ch.chapter_no == ch_no {
-                ch_no += 1
-            }
-        });
-        ch_no
-    }
+    //     manga.len()
+    //     // let mut ch_no = 1;
+    //     // manga.iter().for_each(|ch| {
+    //     //     if ch.chapter_no > ch_no {
+    //     //         ch_no = ch.chapter_no
+    //     //     } else if ch.chapter_no == ch_no {
+    //     //         ch_no += 1
+    //     //     }
+    //     // });
+    //     // ch_no
+    // }
 
     pub fn latest(
         manga_id: uuid::Uuid,
@@ -72,17 +73,17 @@ impl<'a> NewKmChapter<'a> {
         use crate::diesel::ExpressionMethods;
         use crate::diesel::QueryDsl;
         use crate::diesel::RunQueryDsl;
-        let manga: Vec<KmChapter> = kissmanga_chapters::table
-            .filter(kissmanga_chapters::manga_id.eq(&manga_id))
-            .get_results(connection)
-            .unwrap();
+        use std::convert::TryInto;
 
-        let mut ch_no = 1;
-        manga.iter().for_each(|ch| {
-            if ch.chapter_no > ch_no {
-                ch_no = ch.chapter_no
-            }
-        });
-        ch_no
+        // let manga: Vec<KmChapter> =
+        kissmanga_chapters::table
+            .filter(kissmanga_chapters::manga_id.eq(&manga_id))
+            .get_results::<KmChapter>(connection)
+            .unwrap()
+            .len()
+            .try_into()
+            .unwrap()
+
+        // manga.len().try_into().unwrap()
     }
 }

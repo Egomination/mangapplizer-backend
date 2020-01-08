@@ -37,7 +37,7 @@ async fn main() -> std::io::Result<()> {
             .service(
                 web::resource("/mangas")
                     .route(web::get().to(handlers::mangas::index))
-                    .route(web::post().to(handlers::mangas::create)),
+                    .route(web::post().to(handlers::mangas::insert_manga_v2)),
             )
             .service(
                 web::resource("/mangas/{manga_id}")
@@ -47,14 +47,8 @@ async fn main() -> std::io::Result<()> {
                 web::resource("/insert")
                     .route(web::post().to(handlers::mangas::insert_chapter)),
             )
-            .service(
-                web::resource("/insert").route(
-                    web::post().to_async(handlers::mangas::insert_chapter),
-                ),
-            )
     })
-    .bind("0.0.0.0:9092")
-    .unwrap()
+    .bind("0.0.0.0:9092")?
     .run()
     .await
 
