@@ -41,4 +41,24 @@ impl NewTagList {
             .values(self)
             .get_result(connection)
     }
+
+    pub fn insert_tag_list(
+        manga_id: &uuid::Uuid,
+        tag_ids: Vec<i64>,
+        connection: &PgConnection,
+    ) -> Result<(), diesel::result::Error> {
+        use diesel::RunQueryDsl;
+
+        for tid in tag_ids {
+            let tl = Self {
+                manga_id: *manga_id,
+                tag_id:   tid,
+            };
+            diesel::insert_into(tags_lists::table)
+                .values(&tl)
+                .get_result::<TagList>(connection)
+                .unwrap();
+        }
+        Ok(())
+    }
 }

@@ -41,4 +41,24 @@ impl NewGenreList {
             .values(self)
             .get_result(connection)
     }
+
+    pub fn insert_genre_list(
+        manga_id: &uuid::Uuid,
+        genre_ids: Vec<i64>,
+        connection: &PgConnection,
+    ) -> Result<(), diesel::result::Error> {
+        use diesel::RunQueryDsl;
+
+        for gid in genre_ids {
+            let gl = Self {
+                manga_id: *manga_id,
+                genre_id: gid,
+            };
+            diesel::insert_into(genres_lists::table)
+                .values(&gl)
+                .get_result::<GenreList>(connection)
+                .unwrap();
+        }
+        Ok(())
+    }
 }
