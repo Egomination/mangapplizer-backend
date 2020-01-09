@@ -8,6 +8,7 @@ pub enum MangapplizerError {
     EmptySearch(),
     DbError(result::Error),
     RelationInsertionError(String),
+    UnableToConnectToDb(),
 }
 
 impl From<result::Error> for MangapplizerError {
@@ -35,6 +36,10 @@ impl fmt::Display for MangapplizerError {
             }
             MangapplizerError::RelationInsertionError(error) => {
                 write!(f, "Cannot inset {}.", error)
+            }
+            MangapplizerError::UnableToConnectToDb() => {
+                let msg = "Unable to connect to DB!";
+                write!(f, "{}", msg)
             }
             MangapplizerError::DbError(error) => write!(f, "{}", error),
             _ => {
