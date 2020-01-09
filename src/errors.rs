@@ -1,51 +1,54 @@
-use core::fmt;
-use diesel::result;
+use diesel::result::{
+    DatabaseErrorKind,
+    Error as DBError,
+};
+use thiserror::Error;
 
-#[derive(Debug)]
+#[derive(Debug, Error, Serialize)]
 pub enum MangapplizerError {
-    Error(result::Error),
-    TooManyMangas(),
-    EmptySearch(),
-    DbError(result::Error),
+    #[error("There are too many manga results.")]
+    TooManyMangas,
+
+    #[error("BadRequest: {0}")]
+    BadRequest(String),
+
+    #[error("Cannot find any content with the specified search data.")]
+    EmptySearch,
+
+    #[error("{0}")]
+    DatabaseError(DBError),
+    #[error("{0}")]
     RelationInsertionError(String),
-    UnableToConnectToDb(),
+
+    #[error("Unable to connect to Db!")]
+    UnableToConnectToDb,
+
+    #[error("Internal Server Error!")]
+    InternalServerError,
+
+    #[error("Cannot insert into database!: {0}")]
+    InsertionError(String),
 }
 
-impl From<result::Error> for MangapplizerError {
-    fn from(error: result::Error) -> Self {
-        MangapplizerError::DbError(error)
-    }
-}
-
-impl std::error::Error for MangapplizerError {}
-
-impl fmt::Display for MangapplizerError {
-    fn fmt(
-        &self,
-        f: &mut fmt::Formatter,
-    ) -> fmt::Result {
-        match self {
-            MangapplizerError::TooManyMangas() => {
-                let msg = "There are too many manga results.";
-                write!(f, "{}", msg)
+impl From<DBError> for MangapplizerError {
+    fn from(error: DBError) -> MangapplizerError {
+        // Right now we just care about UniqueViolation from diesel
+        // But this would be helpful to easily map errors as our app grows
+        match error {
+            DBError::DatabaseError(kind, info) => {
+                if let DatabaseErrorKind::UniqueViolation = kind {
+                    let message = info
+                        .details()
+                        .unwrap_or_else(|| info.message())
+                        .to_string();
+                    return MangapplizerError::BadRequest(message);
+                }
+                MangapplizerError::InternalServerError
             }
-            MangapplizerError::EmptySearch() => {
-                let msg =
-                    "Cannot find any content with the specified search data.";
-                write!(f, "{}", msg)
-            }
-            MangapplizerError::RelationInsertionError(error) => {
-                write!(f, "Cannot inset {}.", error)
-            }
-            MangapplizerError::UnableToConnectToDb() => {
-                let msg = "Unable to connect to DB!";
-                write!(f, "{}", msg)
-            }
-            MangapplizerError::DbError(error) => write!(f, "{}", error),
-            _ => {
-                let msg = "Undefined error!";
-                write!(f, "{}", msg)
-            }
+            _ => MangapplizerError::InternalServerError,
         }
     }
 }
+
+pub type MangapplizerResult<T> =
+    std::result::Result<T, crate::errors::MangapplizerError>;

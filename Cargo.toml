@@ -12,7 +12,7 @@ actix-web = "2.0.0"
 actix-rt = "1.0.0"
 actix-http = "1.0.1"
 diesel = { version = "1.4.3", features = ["postgres", "uuidv07", "r2d2", "serde_json"] }
-dotenv = "0.15.0"
+dotenv = "0.15.0" # will be deleted since the introduction of structopt
 uuid = { version = "0.7", features = ["serde", "v4"] }
 serde = "1.0.102"
 serde_derive = "1.0.102"
@@ -22,6 +22,7 @@ env_logger = "0.7.1"
 dotenv_codegen = "0.15.0"
 diesel_full_text_search = { version = "1.2.1", git = "https://github.com/werner/diesel_full_text_search" }
 structopt = "0.3.7"
+thiserror = "1.0.9"
 
 [profile.dev]
 # This isn't required for development builds, but makes development
