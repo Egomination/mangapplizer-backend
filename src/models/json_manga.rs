@@ -17,37 +17,37 @@ extern crate serde_json;
 #[derive(Serialize, Deserialize, Clone)]
 pub struct Manga {
     #[serde(rename = "anilistId")]
-    pub anilist_id:     i64,
+    pub anilist_id: i64,
     #[serde(rename = "mangaName")]
-    pub manga_name:     MangaName,
-    pub status:         String,
-    pub description:    String,
+    pub manga_name: MangaName,
+    pub status: String,
+    pub description: String,
     #[serde(rename = "startDate")]
-    pub start_date:     Date,
+    pub start_date: Date,
     #[serde(rename = "endDate")]
-    pub end_date:       Date,
+    pub end_date: Date,
     #[serde(rename = "chapters")]
     pub total_chapters: Option<String>,
-    pub volumes:        Option<String>,
+    pub volumes: Option<String>,
     #[serde(rename = "coverImage")]
-    pub cover_image:    CoverImage,
+    pub cover_image: CoverImage,
     #[serde(rename = "bannerImage")]
-    pub banner_image:   String,
-    pub genres:         Vec<String>,
-    pub popularity:     i64,
+    pub banner_image: String,
+    pub genres: Vec<String>,
+    pub popularity: i64,
     // #[serde(rename = "mangaLinkArray")]
     // pub manga_link_array: Vec<HashMap<String, String>>,
-    pub staff:          Vec<Staff>,
-    pub relations:      Vec<Relation>,
-    pub tags:           Vec<Tag>,
+    pub staff:     Vec<Staff>,
+    pub relations: Vec<Relation>,
+    pub tags:      Vec<Tag>,
 }
 
 #[derive(Serialize, Deserialize, Clone)]
 pub struct CoverImage {
     #[serde(rename = "extraLarge")]
     pub extra_large: String,
-    pub large:       String,
-    pub medium:      String,
+    pub large: String,
+    pub medium: String,
 }
 
 #[derive(Serialize, Deserialize, Clone)]
@@ -67,23 +67,23 @@ pub struct MangaName {
 #[derive(Serialize, Deserialize, Clone)]
 pub struct Relation {
     #[serde(rename = "anilistId")]
-    pub anilist_id:    i64,
-    pub name:          String,
+    pub anilist_id: i64,
+    pub name: String,
     #[serde(rename = "type")]
     pub relation_type: String,
     #[serde(rename = "mediaType")]
-    pub media_type:    String,
-    pub status:        String,
-    pub image:         String,
+    pub media_type: String,
+    pub status: String,
+    pub image: String,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct Staff {
     #[serde(rename = "anilistId")]
-    pub anilist_id:  i64,
-    pub position:    String,
-    pub name:        String,
-    pub picture:     Picture,
+    pub anilist_id: i64,
+    pub position: String,
+    pub name: String,
+    pub picture: Picture,
     pub description: String,
 }
 
@@ -95,10 +95,10 @@ pub struct Picture {
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct Tag {
-    pub name:        String,
-    pub category:    String,
+    pub name: String,
+    pub category: String,
     #[serde(rename = "isMediaSpoiler")]
-    pub is_spoiler:  bool,
+    pub is_spoiler: bool,
     pub description: String,
 }
 

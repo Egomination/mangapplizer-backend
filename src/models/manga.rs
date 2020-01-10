@@ -1,4 +1,5 @@
 use crate::errors::MangapplizerError;
+use crate::errors::MangapplizerResult;
 use crate::models::{
     genre,
     genre_lists,
@@ -162,20 +163,21 @@ impl<'a> NewManga<'a> {
     pub fn create(
         &self,
         connection: &PgConnection,
-    ) -> Result<Manga, MangapplizerError> {
+    ) -> MangapplizerResult<Manga> {
         use diesel::RunQueryDsl;
 
-        diesel::insert_into(mangas::table)
+        let res = diesel::insert_into(mangas::table)
             .values(self)
             .returning(MANGAS_COLUMNS)
-            .get_result::<Manga>(connection)
-            .map_err(MangapplizerError::DbError)
+            .get_result::<Manga>(connection)?;
+
+        Ok(res)
     }
 
     pub fn insert_manga(
         manga_data: json_manga::Manga,
         connection: &PgConnection,
-    ) -> Result<Manga, MangapplizerError> {
+    ) -> MangapplizerResult<Manga> {
         use diesel::Connection;
         use diesel::RunQueryDsl;
 
@@ -214,8 +216,7 @@ impl<'a> NewManga<'a> {
             let manga = diesel::insert_into(mangas::table)
                 .values(&m)
                 .returning(MANGAS_COLUMNS)
-                .get_result::<Manga>(connection)
-                .map_err(MangapplizerError::DbError)?;
+                .get_result::<Manga>(connection)?;
 
             let staff_ids =
                 staff::NewStaff::insert_staff(&manga_data.staff, &connection);

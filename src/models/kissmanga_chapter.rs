@@ -1,4 +1,5 @@
-use crate::errors;
+use crate::errors::MangapplizerError;
+use crate::errors::MangapplizerResult;
 use crate::models::manga;
 use crate::schema::kissmanga_chapters;
 use diesel::PgConnection;
@@ -51,19 +52,21 @@ impl<'a> NewKmChapter<'a> {
     pub fn create(
         &self,
         connection: &PgConnection,
-    ) -> Result<KmChapter, diesel::result::Error> {
+    ) -> MangapplizerResult<KmChapter> {
         use diesel::RunQueryDsl;
 
-        diesel::insert_into(kissmanga_chapters::table)
+        let res = diesel::insert_into(kissmanga_chapters::table)
             .values(self)
-            .get_result::<KmChapter>(connection)
+            .get_result::<KmChapter>(connection)?;
+
+        Ok(res)
     }
 
     pub fn insert_chapter(
         json_data: &Chapter,
         query_data: &QueryData,
         connection: &PgConnection,
-    ) -> Result<&'a str, errors::MangapplizerError> {
+    ) -> MangapplizerResult<&'a str> {
         use diesel::RunQueryDsl;
 
         let search = &json_data.manga_name;
@@ -71,9 +74,9 @@ impl<'a> NewKmChapter<'a> {
 
         // Early return if result is not singular
         if search_result.len() > 1 {
-            return Err(errors::MangapplizerError::TooManyMangas());
+            return Err(MangapplizerError::TooManyMangas);
         } else if search_result.is_empty() {
-            return Err(errors::MangapplizerError::EmptySearch());
+            return Err(MangapplizerError::EmptySearch);
         }
         // chapter_data.chapters.iter().for_each(|m| print_pages(m));
         let mut ch_no = Self::latest(search_result.0[0].id, connection);
@@ -92,20 +95,11 @@ impl<'a> NewKmChapter<'a> {
                 pages:       chapter_json_data.unwrap(),
             };
 
-            let result = diesel::insert_into(kissmanga_chapters::table)
+            diesel::insert_into(kissmanga_chapters::table)
                 .values(&chapter)
                 .get_result::<KmChapter>(connection)
-                .map_err(errors::MangapplizerError::DbError);
-
-            match result {
-                Err(e) => {
-                    log::error!("Cannot insert chapter!, {}", e.to_string())
-                }
-                Ok(response) => {
-                    log::info!("Chapter {:#?} inserted", response);
-                    ch_no += 1;
-                }
-            }
+                .unwrap();
+            ch_no += 1;
         });
         Ok("Chapters inserted!")
     }
