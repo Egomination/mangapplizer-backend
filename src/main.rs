@@ -13,7 +13,7 @@ extern crate serde;
 extern crate serde_json;
 #[macro_use]
 extern crate serde_derive;
-extern crate log;
+// extern crate log;
 
 use actix_web::{
     middleware,
@@ -26,7 +26,7 @@ use actix_web::{
 async fn main() -> std::io::Result<()> {
     std::env::set_var("RUST_LOG", "actix_web=debug");
     std::env::set_var("RUST_BACKTRACE", "1");
-    env_logger::init();
+    // env_logger::init();
     // let sys = actix::System::new("mangapplizer_backend");
 
     HttpServer::new(|| {

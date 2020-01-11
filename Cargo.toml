@@ -8,17 +8,17 @@ edition = "2018"
 
 [dependencies]
 actix = "0.8.3"
-actix-web = "2.0.0"
+actix-web = {version = "2.0.0", features = [] }
 actix-rt = "1.0.0"
-actix-http = "1.0.1"
+# actix-http = "1.0.1"
 diesel = { version = "1.4.3", features = ["postgres", "uuidv07", "r2d2", "serde_json"] }
 dotenv = "0.15.0" # will be deleted since the introduction of structopt
 uuid = { version = "0.7", features = ["serde", "v4"] }
 serde = "1.0.104"
 serde_derive = "1.0.104"
 serde_json = "1.0.41"
-log = "0.4.0"
-env_logger = "0.7.1"
+# log = "0.4.0"
+# env_logger = "0.7.1"
 dotenv_codegen = "0.15.0"
 diesel_full_text_search = { version = "1.2.1", git = "https://github.com/werner/diesel_full_text_search" }
 structopt = "0.3.7"
@@ -31,7 +31,7 @@ thiserror = "1.0.9"
 panic = 'abort'
 
 [profile.release]
-opt-level = 'z'     # Optimize for size. Normally its 3 for binary speed{preffered}
+opt-level = 3     # Optimize for size. Normally its 3 for binary speed{preffered}
 lto = true          # Enable Link Time Optimization
 codegen-units = 1   # Reduce number of codegen units to increase optimizations.
 panic = 'abort'     # Abort on panic

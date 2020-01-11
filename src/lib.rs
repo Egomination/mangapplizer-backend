@@ -7,7 +7,6 @@ extern crate serde_json;
 extern crate serde_derive;
 extern crate actix;
 extern crate actix_web;
-extern crate env_logger;
 
 pub mod db_connection;
 pub mod errors;
