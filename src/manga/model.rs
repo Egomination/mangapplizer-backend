@@ -42,40 +42,25 @@ pub struct Manga {
 #[derive(Insertable, Debug, Deserialize, AsChangeset, PartialEq, Clone)]
 #[table_name = "mangas"]
 pub struct NewManga<'a> {
-    pub anilist_id: i64,
-
-    pub cover_image: &'a str,
-
-    pub banner_image: &'a str,
-
-    pub start_date: String,
-
-    pub end_date: String,
-
-    pub status: &'a str,
-
-    pub description: &'a str,
-
-    pub total_chapters: Option<String>,
-
-    pub volumes: Option<String>,
-
-    pub english_title: &'a str,
-
-    pub romaji_title: &'a str,
-
-    pub native_title: &'a str,
-
+    pub anilist_id:        i64,
+    pub cover_image:       &'a str,
+    pub banner_image:      &'a str,
+    pub start_date:        String,
+    pub end_date:          String,
+    pub status:            &'a str,
+    pub description:       &'a str,
+    pub total_chapters:    Option<String>,
+    pub volumes:           Option<String>,
+    pub english_title:     &'a str,
+    pub romaji_title:      &'a str,
+    pub native_title:      &'a str,
     /// Extra large size of the cover image.
     pub cover_extra_large: &'a str,
-
     /// large size of the cover images.
-    pub cover_large: &'a str,
-
+    pub cover_large:       &'a str,
     /// Normal size of the cover image.
-    pub cover_medium: &'a str,
-
-    pub popularity: i64,
+    pub cover_medium:      &'a str,
+    pub popularity:        i64,
 }
 
 /// Type for the search result. All of the manga search operations will return
