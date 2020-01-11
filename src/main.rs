@@ -1,8 +1,11 @@
 extern crate actix_web;
 
+mod cli_args;
+mod database;
 pub mod db_connection;
 pub mod errors;
 pub mod handlers;
+mod manga;
 pub mod models;
 pub mod schema;
 
@@ -29,11 +32,17 @@ async fn main() -> std::io::Result<()> {
     // env_logger::init();
     // let sys = actix::System::new("mangapplizer_backend");
 
-    HttpServer::new(|| {
+    let opt = {
+        use structopt::StructOpt;
+        cli_args::Opt::from_args()
+    };
+
+    HttpServer::new(move || {
         App::new()
             .wrap(middleware::Compress::default())
             .wrap(middleware::Logger::default())
-            .data(db_connection::establish_connection())
+            .data(database::pool::establish_connection(opt.clone()))
+            .configure(manga::route)
             .service(
                 web::resource("/mangas")
                     .route(web::get().to(handlers::mangas::index))

@@ -11,6 +11,6 @@ pub(crate) struct Opt {
     pub domain: String,
 
     /// Database URL
-    #[structop(long, env = "DATABASE_URL")]
+    #[structopt(long, env = "DATABASE_URL")]
     pub database_url: String,
 }

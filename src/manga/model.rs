@@ -2,6 +2,53 @@ use crate::schema::*;
 use std::time::SystemTime;
 use uuid::Uuid;
 
+type MangaColumns = (
+    mangas::id,
+    mangas::created_at,
+    mangas::updated_at,
+    mangas::deleted_at,
+    mangas::anilist_id,
+    mangas::cover_image,
+    mangas::banner_image,
+    mangas::start_date,
+    mangas::end_date,
+    mangas::status,
+    mangas::description,
+    mangas::total_chapters,
+    mangas::volumes,
+    mangas::english_title,
+    mangas::romaji_title,
+    mangas::native_title,
+    mangas::cover_extra_large,
+    mangas::cover_large,
+    mangas::cover_medium,
+    mangas::popularity,
+);
+
+/// We need to omit FTS' ts_vector column. Hence this.
+pub const MANGAS_COLUMNS: MangaColumns = (
+    mangas::id,
+    mangas::created_at,
+    mangas::updated_at,
+    mangas::deleted_at,
+    mangas::anilist_id,
+    mangas::cover_image,
+    mangas::banner_image,
+    mangas::start_date,
+    mangas::end_date,
+    mangas::status,
+    mangas::description,
+    mangas::total_chapters,
+    mangas::volumes,
+    mangas::english_title,
+    mangas::romaji_title,
+    mangas::native_title,
+    mangas::cover_extra_large,
+    mangas::cover_large,
+    mangas::cover_medium,
+    mangas::popularity,
+);
+
 /// Manga struct that is returned from the database. Manga has multiple parts
 /// such as Relationship, Staff, Tags, Genres and so on.
 #[derive(
@@ -13,6 +60,7 @@ use uuid::Uuid;
     AsChangeset,
     PartialEq,
     Clone,
+    Serialize,
 )]
 #[table_name = "mangas"]
 pub struct Manga {

@@ -4,9 +4,12 @@ use super::{
     PoolError,
 };
 
-fn init_pool(database_url: &str) -> Result<Pool, PoolError> {}
+fn init_pool(database_url: &str) -> Result<Pool, PoolError> {
+    let manager = ConnectionManager::new(database_url);
+    Pool::builder().build(manager)
+}
 
 pub(crate) fn establish_connection(opt: crate::cli_args::Opt) -> Pool {
     init_pool(&opt.database_url)
-        .except("Failed to create database connection pool!")
+        .expect("Failed to create database connection pool!")
 }
