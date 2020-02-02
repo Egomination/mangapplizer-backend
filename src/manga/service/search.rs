@@ -10,7 +10,6 @@ use crate::manga::model::{
 };
 use actix_web::web;
 
-
 #[derive(Debug, Deserialize)]
 pub struct SearchQuery {
     pub title: String,
