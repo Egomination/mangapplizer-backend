@@ -9,7 +9,7 @@ use crate::manga::model::{
     MANGAS_COLUMNS,
 };
 use actix_web::web;
-use diesel::prelude;
+
 
 #[derive(Debug, Deserialize)]
 pub struct SearchQuery {

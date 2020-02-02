@@ -4,7 +4,6 @@ use crate::errors::MangapplizerError;
 use crate::manga::service as manga;
 use actix_web::{
     web,
-    HttpRequest,
     HttpResponse,
 };
 
