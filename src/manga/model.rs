@@ -117,10 +117,12 @@ pub struct NewManga<'a> {
 pub struct MangaList(pub Vec<Manga>);
 
 impl MangaList {
+    #[allow(dead_code)]
     pub fn len(&self) -> usize {
         self.0.iter().len()
     }
 
+    #[allow(dead_code)]
     pub fn is_empty(&self) -> bool {
         self.len() == 0
     }
