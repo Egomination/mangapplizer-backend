@@ -2,7 +2,7 @@ extern crate actix_web;
 
 mod cli_args;
 mod database;
-pub mod db_connection;
+// pub mod db_connection;
 pub mod errors;
 pub mod handlers;
 mod manga;

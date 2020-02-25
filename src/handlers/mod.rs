@@ -8,14 +8,14 @@ use actix_web::{
     //     Result,
 };
 
-use crate::db_connection::{
-    PgPool,
-    PgPooledConnection,
+use crate::database::{
+    Pool,
+    PooledConnection,
 };
 
 pub fn pg_pool_handler(
-    pool: web::Data<PgPool>
-) -> Result<PgPooledConnection, HttpResponse> {
+    pool: web::Data<Pool>
+) -> Result<PooledConnection, HttpResponse> {
     pool.get()
         .map_err(|e| HttpResponse::InternalServerError().json(e.to_string()))
 }

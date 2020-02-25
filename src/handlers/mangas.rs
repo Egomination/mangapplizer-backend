@@ -1,6 +1,6 @@
-use crate::db_connection::PgPool;
 use crate::models::*;
 // use actix::prelude::Future;
+use crate::database;
 use actix_web::{
     web,
     HttpRequest,
@@ -20,7 +20,7 @@ pub struct MangaSearch {
 // serializing it to a json response
 pub async fn index(
     _req: HttpRequest,
-    pool: web::Data<PgPool>,
+    pool: web::Data<database::Pool>,
     manga_search: web::Query<MangaSearch>,
 ) -> Result<HttpResponse, HttpResponse> {
     let pg_pool = pg_pool_handler(pool)?;
@@ -32,7 +32,7 @@ pub async fn index(
 pub async fn insert_chapter(
     chapter_data: web::Json<kissmanga_chapter::Chapter>,
     query: web::Query<kissmanga_chapter::QueryData>,
-    pool: web::Data<PgPool>,
+    pool: web::Data<database::Pool>,
 ) -> Result<HttpResponse, HttpResponse> {
     let pg_pool = pg_pool_handler(pool)?;
     let chapters: kissmanga_chapter::Chapter = chapter_data.clone();
@@ -44,7 +44,7 @@ pub async fn insert_chapter(
 
 pub async fn find(
     manga_id: web::Path<String>,
-    pool: web::Data<PgPool>,
+    pool: web::Data<database::Pool>,
 ) -> Result<HttpResponse, HttpResponse> {
     let pg_pool = pg_pool_handler(pool)?;
     response::Response::full(manga_id.to_string(), &pg_pool)
@@ -54,7 +54,7 @@ pub async fn find(
 
 pub async fn insert_manga_v2(
     new_manga: web::Json<json_manga::Manga>,
-    pool: web::Data<PgPool>,
+    pool: web::Data<database::Pool>,
 ) -> Result<HttpResponse, HttpResponse> {
     let pg_pool = pg_pool_handler(pool)?;
     let m: json_manga::Manga = new_manga.clone();
